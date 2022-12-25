@@ -18,7 +18,7 @@ public class GameScreen extends ScreenAdapter{
         this.game = game;
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(true, 1920, 1080);
+        camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         batch = new SpriteBatch();
     }
@@ -52,6 +52,7 @@ public class GameScreen extends ScreenAdapter{
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 System.out.println("clicked");
+                game.setScreen(new NewOpeningScreen(game));
             }
         });
         createButton(AssetRenderer.loadGameDrawable).addListener(new ClickListener(){
