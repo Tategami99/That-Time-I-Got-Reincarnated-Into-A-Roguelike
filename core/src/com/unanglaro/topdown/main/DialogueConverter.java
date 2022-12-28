@@ -8,16 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DialogueConverter {
-    public static BufferedReader br;
-    public static List<String> dialogue = new ArrayList<>();
+    public BufferedReader br;
+    public List<String> dialogue = new ArrayList<>();
+    public Integer elementsPerRow = 9;
 
     DialogueConverter(){
 
     }
-    public static String filePath = "assets/Dialogue/dialogue.csv";
-    public static String line;
+    public String filePath = "assets/Dialogue/dialogue.csv";
+    public String line;
 
-    public static void convert(){
+    public void convert(){
         try{
             br = new BufferedReader(new FileReader(filePath));
             while((line = br.readLine()) != null){
@@ -46,7 +47,7 @@ public class DialogueConverter {
             }
         }
     }
-    public static List<String> getConversation(int start, int finish){
+    public List<String> getConversation(int start, int finish){
         List<String> convo = dialogue.subList(start, finish);
         return convo;
     }

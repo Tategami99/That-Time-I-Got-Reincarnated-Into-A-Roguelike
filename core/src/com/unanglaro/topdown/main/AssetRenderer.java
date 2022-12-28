@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Texture.*;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 
 public class AssetRenderer {
@@ -29,6 +30,9 @@ public class AssetRenderer {
     public Texture mainMenuTexture;
     public Drawable mainMenuDrawable;
     
+    //dialogue stuff
+    public Skin dialogueBox;
+    public BitmapFont font = new BitmapFont();
 
     public void mainMenuLoad(){
         //background
@@ -69,5 +73,9 @@ public class AssetRenderer {
         //main menu button
         mainMenuTexture = new Texture("UserInterface/mainmenu.png");
         mainMenuDrawable = new TextureRegionDrawable(new TextureRegion(mainMenuTexture));
+    }
+    public void dialogueUILoad(){
+        //background
+        dialogueBox = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
     }
 }

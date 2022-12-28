@@ -55,7 +55,7 @@ public class GameScreen extends ScreenAdapter{
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 System.out.println("clicked");
-                game.setScreen(new Overworld(game));
+                game.setScreen(new OpeningScreen(game));
             }
         });
         createButton(renderer.loadGameDrawable).addListener(new ClickListener(){

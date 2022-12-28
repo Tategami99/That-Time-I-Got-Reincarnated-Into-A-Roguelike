@@ -8,7 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class OpeningScreen extends ScreenAdapter{
     private rpgGame game;
-    private AssetRenderer renderer = new AssetRenderer();
+    private AssetRenderer renderer;
+    private DialogueManager dialoguer;
 
     private OrthographicCamera camera;
     private Stage stage;
@@ -16,6 +17,8 @@ public class OpeningScreen extends ScreenAdapter{
 
     OpeningScreen(rpgGame game){
         this.game = game;
+
+        renderer = new AssetRenderer();
         
         camera = new OrthographicCamera();
         camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -27,6 +30,8 @@ public class OpeningScreen extends ScreenAdapter{
     @Override
     public void show(){
         stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
+        dialoguer = new DialogueManager(stage, 0, 17);
     }
     @Override
     public void render(float delta){
