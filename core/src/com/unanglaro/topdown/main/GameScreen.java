@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 public class GameScreen extends ScreenAdapter{
     private rpgGame game;
+    private AssetRenderer renderer = new AssetRenderer();
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private Stage stage;
@@ -21,12 +22,14 @@ public class GameScreen extends ScreenAdapter{
         camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         batch = new SpriteBatch();
+        
+        renderer.mainMenuLoad();
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(1F, 1F, 1F, 1F);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_STENCIL_BUFFER_BIT);
 
         stage.act(Gdx.graphics.getDeltaTime());
 
@@ -35,7 +38,7 @@ public class GameScreen extends ScreenAdapter{
 
         batch.begin();
         //render code
-            batch.draw(AssetRenderer.spriteBackground, 0, 0);
+            batch.draw(renderer.spriteBackground, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
 
         stage.draw();
@@ -48,20 +51,20 @@ public class GameScreen extends ScreenAdapter{
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
 
-        createButton(AssetRenderer.newGameDrawable).addListener(new ClickListener(){
+        createButton(renderer.newGameDrawable).addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 System.out.println("clicked");
-                game.setScreen(new NewOpeningScreen(game));
+                game.setScreen(new Overworld(game));
             }
         });
-        createButton(AssetRenderer.loadGameDrawable).addListener(new ClickListener(){
+        createButton(renderer.loadGameDrawable).addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 System.out.println("clicked");
             }
         });;
-        createButton(AssetRenderer.quitDrawable).addListener(new ClickListener(){
+        createButton(renderer.quitDrawable).addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 Gdx.app.exit();
@@ -73,19 +76,13 @@ public class GameScreen extends ScreenAdapter{
 
     @Override
     public void hide() {
-        // TODO Auto-generated method stub
-        
-    }
-
-
-    @Override
-    public void resize(int width, int height) {
-        // TODO Auto-generated method stub
+        dispose();
         
     }
     @Override
     public void dispose() {
-        // TODO Auto-generated method stub
+        batch.dispose();
+        stage.dispose();
         
     }
     

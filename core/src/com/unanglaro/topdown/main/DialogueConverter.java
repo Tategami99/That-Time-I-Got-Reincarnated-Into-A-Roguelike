@@ -26,11 +26,11 @@ public class DialogueConverter {
                 for(int i=0; i<values.length; i++){
                     for (String string : values[i].split("\n")) {
                         dialogue.add(string);
-                        System.out.println(string + "===");
+                        //System.out.println(string + "===");
                     }
                 }
             }
-            System.out.println(dialogue.size());
+            //System.out.println(dialogue.size());
             System.out.println("worked");
         } catch(FileNotFoundException e){
             e.printStackTrace();
