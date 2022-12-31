@@ -11,7 +11,7 @@ public class DesktopLauncher {
 		DisplayMode primaryMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
-		config.setTitle("That Time I Got Reincarnated Into A Rougelike");
+		config.setTitle("That Time I Got Reincarnated Into A Roguelike");
 		config.setResizable(false);
 		config.setFullscreenMode(primaryMode);
 		new Lwjgl3Application(new rpgGame(), config);

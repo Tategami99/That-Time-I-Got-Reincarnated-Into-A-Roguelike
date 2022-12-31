@@ -1,13 +1,23 @@
 package com.unanglaro.topdown.main;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Texture.*;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 
 public class AssetRenderer {
+    public AssetManager assetManager;
+
+    //testing
+    public Texture testingTexture;
+    public Sprite testingSprite;
+
     //main menu stuff
     public Texture backgroundTexture;
     public Sprite spriteBackground;
@@ -33,6 +43,25 @@ public class AssetRenderer {
     //dialogue stuff
     public Skin dialogueBox;
     public BitmapFont font = new BitmapFont();
+
+    //player stuff
+    public Texture playerMoveTexture;
+    public Animation<TextureRegion> playerMoveAnimation;
+
+    //overworld stuff
+    public TiledMap overworldMap;
+    public OrthogonalTiledMapRenderer overworldRenderer;
+
+    AssetRenderer(){
+        assetManager = new AssetManager();
+    }
+
+    public void testingLoad(){
+        testingTexture = new Texture("MainMenu/nino6.jpg");
+        testingTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        testingSprite = new Sprite(testingTexture);
+        testingSprite.flip(false, true);
+    }
 
     public void mainMenuLoad(){
         //background
@@ -77,5 +106,28 @@ public class AssetRenderer {
     public void dialogueUILoad(){
         //background
         dialogueBox = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
+    }
+    public void playerLoad(Integer FRAME_COLS, Integer FRAME_ROWS, Float frameInterval){
+        playerMoveTexture = new Texture("Spritesheets/playermove.png");
+        playerMoveAnimation = createAnimation(playerMoveTexture, FRAME_COLS, FRAME_ROWS, frameInterval);
+    }
+    public void overworldLoadShow(){
+        overworldMap = new TmxMapLoader().load("assets/Tiled/Overworld.tmx");
+        overworldRenderer = new OrthogonalTiledMapRenderer(overworldMap);
+    }
+
+    // non loading methods
+    public Animation<TextureRegion> createAnimation( Texture texture, Integer FRAME_COLS, Integer FRAME_ROWS, Float frameInterval){
+        TextureRegion[][] tmp = TextureRegion.split(texture, texture.getWidth()/FRAME_COLS, texture.getHeight()/FRAME_ROWS);
+        TextureRegion[] frames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
+        int index = 0;
+        for (int i = 0; i < FRAME_ROWS; i++){
+            for (int j = 0; j < FRAME_COLS; j++){
+                frames[index++] = tmp[i][j];
+            }
+        }
+
+        Animation<TextureRegion> animation = new Animation<TextureRegion>(frameInterval, frames);
+        return animation;
     }
 }

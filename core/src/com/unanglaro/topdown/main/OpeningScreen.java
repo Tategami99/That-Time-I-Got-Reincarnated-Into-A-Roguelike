@@ -31,7 +31,7 @@ public class OpeningScreen extends ScreenAdapter{
     public void show(){
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-        dialoguer = new DialogueManager(stage, 0, 17);
+        dialoguer = new DialogueManager(game, stage, 0, 17, true);
     }
     @Override
     public void render(float delta){
@@ -54,6 +54,7 @@ public class OpeningScreen extends ScreenAdapter{
     }
     @Override
     public void dispose(){
+        batch.dispose();
         stage.dispose();
     }
 }

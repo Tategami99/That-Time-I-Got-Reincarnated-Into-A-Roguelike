@@ -31,7 +31,7 @@ public class PauseMenu extends Group{
             public void clicked (InputEvent event, float x, float y) {
                 System.out.println("clicked");
                 player.isPaused = false;
-                player.update();
+                //player.updateInput();
             }
         });
         createButton(renderer.saveGameDrawable).addListener(new ClickListener(){
