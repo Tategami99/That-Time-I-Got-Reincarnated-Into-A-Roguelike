@@ -1,6 +1,5 @@
 package com.unanglaro.topdown.main;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
@@ -11,6 +10,8 @@ public class PauseMenu extends Group{
 
     private AssetRenderer renderer = new AssetRenderer();
     private Table pausedTable;
+    private Integer worldWidth = 1600;
+    private Integer worldHeight = 960;
 
     PauseMenu(Player player, rpgGame game){
         System.out.println("opened");
@@ -30,8 +31,7 @@ public class PauseMenu extends Group{
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 System.out.println("clicked");
-                player.isPaused = false;
-                //player.updateInput();
+                player.toggleEscape();
             }
         });
         createButton(renderer.saveGameDrawable).addListener(new ClickListener(){
@@ -44,11 +44,12 @@ public class PauseMenu extends Group{
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 System.out.println("clicked");
+                renderer.pauseScreenDispose();
                 game.setScreen(new GameScreen(game));
             }
         });
 
-        this.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+        this.setPosition(worldWidth/2, worldHeight/2);
     }
 
     //my methods

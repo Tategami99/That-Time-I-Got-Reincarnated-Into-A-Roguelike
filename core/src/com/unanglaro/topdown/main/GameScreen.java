@@ -77,7 +77,7 @@ public class GameScreen extends ScreenAdapter{
     @Override
     public void hide() {
         dispose();
-        
+        renderer.mainMenuDispose();
     }
     @Override
     public void dispose() {

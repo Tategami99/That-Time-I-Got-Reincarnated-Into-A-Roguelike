@@ -51,6 +51,7 @@ public class OpeningScreen extends ScreenAdapter{
     @Override
     public void hide(){
         dispose();
+        renderer.openingScreenDispose();
     }
     @Override
     public void dispose(){

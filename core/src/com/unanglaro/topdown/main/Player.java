@@ -1,7 +1,6 @@
 package com.unanglaro.topdown.main;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -27,47 +26,21 @@ public class Player extends Sprite implements InputProcessor{
     private PauseMenu pauseMenu;
 
     //variables received from game world
-    private rpgGame game;
     private AssetRenderer renderer;
     private Stage stage;
     private SpriteBatch batch;
     private TiledMapTileLayer collisionLayer;
+    private Integer worldWidth = 1600;
+    private Integer worldHeight = 960;
 
-    Player(TextureRegion still, TiledMapTileLayer collisionLayer){
+    Player(TextureRegion still, TiledMapTileLayer collisionLayer, rpgGame game, Stage stage){
         super(still);
         this.collisionLayer = collisionLayer;
+        this.stage = stage;
+        
+        pauseMenu = new PauseMenu(this, game);
     }
-    /*
-    public void updateInput(){
-        elapsedTime += Gdx.graphics.getDeltaTime();
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
-            System.out.println("esc pressed");
-            isPaused = !isPaused;
-            if(isPaused){
-                stage.addActor(pauseMenu);
-            }
-            else{
-                pauseMenu.remove();
-            }
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
-
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.S)){
-
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.A)){
-
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.D)){
-
-        }
-    }
-
-    public void updateBatch(){
-        batch.draw(renderer.playerMoveAnimation.getKeyFrame(elapsedTime, true), 50, 50, playerSpriteWidth, playerSpriteHeight*-1);
-    }
-    */
+    
     public void draw(Batch spriteBatch){
         update(Gdx.graphics.getDeltaTime());
         super.draw(spriteBatch);
@@ -165,7 +138,6 @@ public class Player extends Sprite implements InputProcessor{
             setY(oldY);
             velocity.y = 0;
         }
-        System.out.println("collisionx is: " + collisionX + " and collision y is: " + collisionY);
     }
 
     public TiledMapTileLayer getCollisionsLayer(){
@@ -191,6 +163,9 @@ public class Player extends Sprite implements InputProcessor{
     @Override
     public boolean keyUp(int keycode) {
         switch(keycode){
+            case Keys.ESCAPE:
+                toggleEscape();
+                break;
             case Keys.W:
                 velocity.y = 0;
                 break;
@@ -207,7 +182,6 @@ public class Player extends Sprite implements InputProcessor{
     }
     @Override
     public boolean keyTyped(char character) {
-        // TODO Auto-generated method stub
         return false;
     }
     @Override
@@ -234,5 +208,17 @@ public class Player extends Sprite implements InputProcessor{
     public boolean scrolled(float amountX, float amountY) {
         // TODO Auto-generated method stub
         return false;
+    }
+    
+    //
+    public void toggleEscape(){
+        isPaused = !isPaused;
+        if(!isPaused){
+            Gdx.input.setInputProcessor(stage);
+            stage.addActor(pauseMenu);
+        }else{
+            Gdx.input.setInputProcessor(this);
+            pauseMenu.remove();
+        }
     }
 }

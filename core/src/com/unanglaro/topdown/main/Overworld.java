@@ -5,15 +5,20 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Overworld extends ScreenAdapter{
+    private Integer worldWidth;
+    private Integer worldHeight;
+
     private rpgGame game;
     private AssetRenderer renderer = new AssetRenderer();
     private Player player;
 
     private OrthographicCamera camera;
     private Stage stage;
-    private SpriteBatch batch;
+    private Viewport viewport;
     
     Overworld(rpgGame game){
         this.game = game;
@@ -22,8 +27,6 @@ public class Overworld extends ScreenAdapter{
         
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        batch = new SpriteBatch();
     }
 
     @Override
@@ -37,7 +40,6 @@ public class Overworld extends ScreenAdapter{
 
         //update stuff
         camera.update();
-        batch.setProjectionMatrix(camera.combined);
         renderer.overworldRenderer.getBatch().setProjectionMatrix(camera.combined);
 
         /*
@@ -50,14 +52,21 @@ public class Overworld extends ScreenAdapter{
             player.draw(renderer.overworldRenderer.getBatch());
         renderer.overworldRenderer.getBatch().end();
 
-        //stage.draw();
+        stage.draw();
 	}
     @Override
 	public void show () {
         renderer.overworldLoadShow();
-        //player = new Player(game, renderer, stage, batch);
-        player = new Player(renderer.playerMoveAnimation.getKeyFrame(1), (TiledMapTileLayer) renderer.overworldMap.getLayers().get(1));
+        worldWidth = renderer.overworldMapProperties.get("width", Integer.class)*renderer.overworldMapProperties.get("tilewidth", Integer.class);
+        worldHeight = renderer.overworldMapProperties.get("height", Integer.class)*renderer.overworldMapProperties.get("tileheight", Integer.class);
+
+        viewport = new FitViewport(worldWidth, worldHeight, camera);
+
+        stage = new Stage(viewport, renderer.overworldRenderer.getBatch());
+
+        player = new Player(renderer.playerMoveAnimation.getKeyFrame(1), (TiledMapTileLayer) renderer.overworldMap.getLayers().get(1), game, stage);
         player.setPosition(20 * player.getCollisionsLayer().getTileWidth(), 20 * player.getCollisionsLayer().getTileHeight());
+
         Gdx.input.setInputProcessor(player);
 	}
     @Override
@@ -66,7 +75,9 @@ public class Overworld extends ScreenAdapter{
 	}
     @Override
 	public void dispose () {
-        //stage.dispose();
+        stage.dispose();
+        renderer.overworldDispose();
+        renderer.playerDispose();
 	}
 
     //my methods

@@ -1,10 +1,10 @@
 package com.unanglaro.topdown.main;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Texture.*;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -12,8 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 
 public class AssetRenderer {
-    public AssetManager assetManager;
-
     //testing
     public Texture testingTexture;
     public Sprite testingSprite;
@@ -51,16 +49,20 @@ public class AssetRenderer {
     //overworld stuff
     public TiledMap overworldMap;
     public OrthogonalTiledMapRenderer overworldRenderer;
+    MapProperties overworldMapProperties;
 
-    AssetRenderer(){
-        assetManager = new AssetManager();
-    }
+  AssetRenderer(){
+        
+    }  
 
     public void testingLoad(){
         testingTexture = new Texture("MainMenu/nino6.jpg");
         testingTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         testingSprite = new Sprite(testingTexture);
         testingSprite.flip(false, true);
+    }
+    public void testingDispose(){
+        testingTexture.dispose();
     }
 
     public void mainMenuLoad(){
@@ -83,6 +85,13 @@ public class AssetRenderer {
         quitDrawable = new TextureRegionDrawable(new TextureRegion(quitTexture));
 
     }
+    public void mainMenuDispose(){
+        backgroundTexture.dispose();
+        newGameTexture.dispose();
+        loadGameTexture.dispose();
+        quitTexture.dispose();
+    }
+
     public void openingScreenLoad(){
         //background
         openingBackgroundTexture = new Texture("OpeningScreen/ninoDarkMode.png");
@@ -90,6 +99,10 @@ public class AssetRenderer {
         openingBackgroundSprite = new Sprite(openingBackgroundTexture);
         openingBackgroundSprite.flip(false, true);
     }
+    public void openingScreenDispose(){
+        openingBackgroundTexture.dispose();
+    }
+
     public void pauseScreenLoad(){
         //resume button
         resumeTexture = new Texture("UserInterface/resume.png");
@@ -103,17 +116,33 @@ public class AssetRenderer {
         mainMenuTexture = new Texture("UserInterface/mainmenu.png");
         mainMenuDrawable = new TextureRegionDrawable(new TextureRegion(mainMenuTexture));
     }
+    public void pauseScreenDispose(){
+        resumeTexture.dispose();
+        saveGameTexture.dispose();
+        mainMenuTexture.dispose();
+    }
+
     public void dialogueUILoad(){
         //background
         dialogueBox = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
     }
+    
     public void playerLoad(Integer FRAME_COLS, Integer FRAME_ROWS, Float frameInterval){
         playerMoveTexture = new Texture("Spritesheets/playermove.png");
         playerMoveAnimation = createAnimation(playerMoveTexture, FRAME_COLS, FRAME_ROWS, frameInterval);
     }
+    public void playerDispose(){
+        playerMoveTexture.dispose();
+    }
+
     public void overworldLoadShow(){
         overworldMap = new TmxMapLoader().load("assets/Tiled/Overworld.tmx");
         overworldRenderer = new OrthogonalTiledMapRenderer(overworldMap);
+        overworldMapProperties = overworldMap.getProperties();
+    }
+    public void overworldDispose(){
+        overworldMap.dispose();
+        overworldRenderer.dispose();
     }
 
     // non loading methods
