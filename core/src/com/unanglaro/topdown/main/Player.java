@@ -1,8 +1,11 @@
 package com.unanglaro.topdown.main;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,10 +23,12 @@ public class Player extends Sprite implements InputProcessor{
 
     //game state variables
     public boolean isPaused = false;
-    public float elapsedTime = 0f;
 
     //variables relative to player
     private PauseMenu pauseMenu;
+    private ArrayList<Projectile> projectiles;
+    private ArrayList<Projectile> projectilesToRemove;
+    private float shootingSpeed = 50;
 
     //variables received from game world
     private AssetRenderer renderer;
@@ -39,11 +44,33 @@ public class Player extends Sprite implements InputProcessor{
         this.stage = stage;
         
         pauseMenu = new PauseMenu(this, game);
+        projectiles = new ArrayList<Projectile>();
+        projectilesToRemove = new ArrayList<Projectile>();
+    }
+
+    public void updateNonRender(){
+        //update arrows
+        if (projectiles.size() > 0){
+            for(Projectile projectile : projectiles){
+                projectile.update(Gdx.graphics.getDeltaTime());
+                if (projectile.remove){
+                    projectilesToRemove.add(projectile);
+                }
+            }
+            projectiles.removeAll(projectilesToRemove);
+        }
     }
     
     public void draw(Batch spriteBatch){
         update(Gdx.graphics.getDeltaTime());
         super.draw(spriteBatch);
+
+        //render arrows
+        if (projectiles.size() > 0){
+            for (Projectile projectile : projectiles){
+                projectile.render(spriteBatch);
+            }
+        }
     }
 
     public void update(float delta){
@@ -186,7 +213,11 @@ public class Player extends Sprite implements InputProcessor{
     }
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // TODO Auto-generated method stub
+        switch(button){
+            case Buttons.LEFT:
+                projectiles.add(new Projectile(shootingSpeed, getX(), getY(), screenX, screenY, worldWidth, worldHeight));
+
+        }
         return false;
     }
     @Override

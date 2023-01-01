@@ -51,6 +51,10 @@ public class AssetRenderer {
     public OrthogonalTiledMapRenderer overworldRenderer;
     MapProperties overworldMapProperties;
 
+    //arrow projectile stuff
+    public Texture arrowTexture;
+    public Animation<TextureRegion> arrowAnimation;
+
   AssetRenderer(){
         
     }  
@@ -143,6 +147,10 @@ public class AssetRenderer {
     public void overworldDispose(){
         overworldMap.dispose();
         overworldRenderer.dispose();
+    }
+    public void arrowProjectileLoad(){
+        arrowTexture = new Texture("Projectiles/arrow.png");
+        arrowAnimation = createAnimation(arrowTexture, 2, 2, 0.05f);
     }
 
     // non loading methods

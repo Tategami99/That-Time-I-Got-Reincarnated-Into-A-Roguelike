@@ -2,7 +2,6 @@ package com.unanglaro.topdown.main;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -41,13 +40,8 @@ public class Overworld extends ScreenAdapter{
         //update stuff
         camera.update();
         renderer.overworldRenderer.getBatch().setProjectionMatrix(camera.combined);
+        player.updateNonRender();
 
-        /*
-        batch.begin();
-        //render code
-        player.draw(batch);
-        batch.end();
-        */
         renderer.overworldRenderer.getBatch().begin();
             player.draw(renderer.overworldRenderer.getBatch());
         renderer.overworldRenderer.getBatch().end();
