@@ -8,7 +8,6 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
@@ -16,10 +15,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class Player extends Sprite implements InputProcessor{
     //player variables
-    public Float playerSpriteWidth;
-    public Float playerSpriteHeight;
+    private float width, height;
+    private float colliderX, colliderY;
     private Vector2 velocity = new Vector2();
-    private Float speed = 120f;
+    private float speed = 120f;
+    private float scaleAmount = 0.75f;
+    private float mouseX, mouseY, diffX, diffY, angle;
 
     //game state variables
     public boolean isPaused = false;
@@ -28,24 +29,32 @@ public class Player extends Sprite implements InputProcessor{
     private PauseMenu pauseMenu;
     private ArrayList<Projectile> projectiles;
     private ArrayList<Projectile> projectilesToRemove;
-    private float shootingSpeed = 50;
+    private float shootingSpeed = 150;
 
     //variables received from game world
     private AssetRenderer renderer;
     private Stage stage;
-    private SpriteBatch batch;
     private TiledMapTileLayer collisionLayer;
-    private Integer worldWidth = 1600;
-    private Integer worldHeight = 960;
+    private float worldWidth = 1600;
+    private float worldHeight = 960;
 
     Player(TextureRegion still, TiledMapTileLayer collisionLayer, rpgGame game, Stage stage){
         super(still);
         this.collisionLayer = collisionLayer;
         this.stage = stage;
-        
+
+        renderer = new AssetRenderer();        
         pauseMenu = new PauseMenu(this, game);
         projectiles = new ArrayList<Projectile>();
         projectilesToRemove = new ArrayList<Projectile>();
+
+        renderer.playerItemsLoad();
+        
+        scale(scaleAmount);
+        width = getWidth()*scaleAmount;
+        height = getHeight()*scaleAmount;
+        colliderX = width;
+        colliderY = height*0.25f;
     }
 
     public void updateNonRender(){
@@ -63,7 +72,9 @@ public class Player extends Sprite implements InputProcessor{
     
     public void draw(Batch spriteBatch){
         update(Gdx.graphics.getDeltaTime());
+        //System.out.println("x: " + getX() + " y: " + getY());
         super.draw(spriteBatch);
+        spriteBatch.draw(renderer.playerBowTextureRegion, getX() - width/2, getY() + height/2, renderer.playerBowTextureRegion.getRegionWidth()/2, 0, renderer.playerBowTextureRegion.getRegionWidth(), renderer.playerBowTextureRegion.getRegionHeight(), 1, 1,(float) (90 - Math.toDegrees(angle)));
 
         //render arrows
         if (projectiles.size() > 0){
@@ -93,13 +104,13 @@ public class Player extends Sprite implements InputProcessor{
         setX(getX() + velocity.x*delta);
         if(velocity.x < 0){
             //top left tile
-            if( collisionLayer.getCell((int) (getX()/tileWdith) ,(int) ((getY() + getHeight())/tileHeight)) != null){
-                collisionX = collisionLayer.getCell((int) (getX()/tileWdith) ,(int) ((getY() + getHeight())/tileHeight)).getTile().getProperties().containsKey("blocked");
+            if( collisionLayer.getCell((int) (getX()/tileWdith) ,(int) ((getY() + height)/tileHeight)) != null){
+                collisionX = collisionLayer.getCell((int) (getX()/tileWdith) ,(int) ((getY() + height)/tileHeight)).getTile().getProperties().containsKey("blocked");
             }
 
             //middle left tile
-            if(!collisionX && collisionLayer.getCell((int) (getX()/tileWdith) ,(int) ((getY() + getHeight()/2)/tileHeight)) != null){
-                collisionX = collisionLayer.getCell((int) (getX()/tileWdith) ,(int) ((getY() + getHeight()/2)/tileHeight)).getTile().getProperties().containsKey("blocked");
+            if(!collisionX && collisionLayer.getCell((int) (getX()/tileWdith) ,(int) ((getY() + height/2)/tileHeight)) != null){
+                collisionX = collisionLayer.getCell((int) (getX()/tileWdith) ,(int) ((getY() + height/2)/tileHeight)).getTile().getProperties().containsKey("blocked");
             }
 
             //bottom left tile
@@ -110,16 +121,16 @@ public class Player extends Sprite implements InputProcessor{
         }
         else if(velocity.x >0){
             //top right tile
-            if(collisionLayer.getCell((int) ((getX() + getWidth()) / tileWdith), (int) ((getY() + getHeight()) / tileHeight)) != null){
-                collisionX = collisionLayer.getCell((int) ((getX() + getWidth()) / tileWdith), (int) ((getY() + getHeight()) / tileHeight)).getTile().getProperties().containsKey("blocked");
+            if(collisionLayer.getCell((int) ((getX() + width) / tileWdith), (int) ((getY() + height) / tileHeight)) != null){
+                collisionX = collisionLayer.getCell((int) ((getX() + width) / tileWdith), (int) ((getY() + height) / tileHeight)).getTile().getProperties().containsKey("blocked");
             }
             //middle right tile
-            if(!collisionX && collisionLayer.getCell((int) ((getX() + getWidth()) / tileWdith), (int) ((getY() + getWidth()/2) / tileHeight)) != null){
-                collisionX = collisionLayer.getCell((int) ((getX() + getWidth()) / tileWdith), (int) ((getY() + getWidth()/2) / tileHeight)).getTile().getProperties().containsKey("blocked");
+            if(!collisionX && collisionLayer.getCell((int) ((getX() + width) / tileWdith), (int) ((getY() + width/2) / tileHeight)) != null){
+                collisionX = collisionLayer.getCell((int) ((getX() + width) / tileWdith), (int) ((getY() + width/2) / tileHeight)).getTile().getProperties().containsKey("blocked");
             }
             //bottom right tile
-            if(!collisionX && collisionLayer.getCell((int) ((getX() + getWidth()) / tileWdith), (int) (getY() / tileHeight)) != null){
-                collisionX = collisionLayer.getCell((int) ((getX() + getWidth()) / tileWdith), (int) (getY() / tileHeight)).getTile().getProperties().containsKey("blocked");
+            if(!collisionX && collisionLayer.getCell((int) ((getX() + width) / tileWdith), (int) (getY() / tileHeight)) != null){
+                collisionX = collisionLayer.getCell((int) ((getX() + width) / tileWdith), (int) (getY() / tileHeight)).getTile().getProperties().containsKey("blocked");
             }
         }
         //react to x collision
@@ -136,13 +147,13 @@ public class Player extends Sprite implements InputProcessor{
                 collisionY = collisionLayer.getCell((int) (getX() / tileWdith),(int) (getY() / tileHeight)).getTile().getProperties().containsKey("blocked");
             }
             //bottom middle tile
-            if(!collisionY && collisionLayer.getCell((int) ((getX() + getWidth() / 2) / tileWdith),(int) (getY() / tileHeight)) != null){
-                collisionY = collisionLayer.getCell((int) ((getX() + getWidth() / 2) / tileWdith),(int) (getY() / tileHeight)).getTile().getProperties().containsKey("blocked");
+            if(!collisionY && collisionLayer.getCell((int) ((getX() + width / 2) / tileWdith),(int) (getY() / tileHeight)) != null){
+                collisionY = collisionLayer.getCell((int) ((getX() + width / 2) / tileWdith),(int) (getY() / tileHeight)).getTile().getProperties().containsKey("blocked");
             }
 
             //bottom right tile
-            if(!collisionY && collisionLayer.getCell((int) ((getX() + getWidth()) / tileWdith),(int) (getY() / tileHeight)) != null){
-                collisionY = collisionLayer.getCell((int) ((getX() + getWidth()) / tileWdith),(int) (getY() / tileHeight)).getTile().getProperties().containsKey("blocked");
+            if(!collisionY && collisionLayer.getCell((int) ((getX() + width) / tileWdith),(int) (getY() / tileHeight)) != null){
+                collisionY = collisionLayer.getCell((int) ((getX() + width) / tileWdith),(int) (getY() / tileHeight)).getTile().getProperties().containsKey("blocked");
             }
         }
         else if(velocity.y >0){
@@ -151,13 +162,13 @@ public class Player extends Sprite implements InputProcessor{
                 collisionY = collisionLayer.getCell((int) (getX() / tileWdith),(int) (getY() / tileHeight)).getTile().getProperties().containsKey("blocked");
             }
             //top middle tile
-            if(!collisionY && collisionLayer.getCell((int) (getX() / tileWdith),(int) ((getY() + getHeight()) / tileHeight)) != null){
-                collisionY = collisionLayer.getCell((int) (getX() / tileWdith),(int) ((getY() + getHeight()) / tileHeight)).getTile().getProperties().containsKey("blocked");
+            if(!collisionY && collisionLayer.getCell((int) (getX() / tileWdith),(int) ((getY() + height) / tileHeight)) != null){
+                collisionY = collisionLayer.getCell((int) (getX() / tileWdith),(int) ((getY() + height) / tileHeight)).getTile().getProperties().containsKey("blocked");
             }
 
             //top right tile
-            if(!collisionY && collisionLayer.getCell((int) ((getX() + getWidth() / 2) / tileWdith),(int) ((getY() + getHeight() / 2) / tileHeight)) != null){
-                collisionY = collisionLayer.getCell((int) ((getX() + getWidth() / 2) / tileWdith),(int) ((getY() + getHeight() / 2) / tileHeight)).getTile().getProperties().containsKey("blocked");
+            if(!collisionY && collisionLayer.getCell((int) ((getX() + width / 2) / tileWdith),(int) ((getY() + height / 2) / tileHeight)) != null){
+                collisionY = collisionLayer.getCell((int) ((getX() + width / 2) / tileWdith),(int) ((getY() + height / 2) / tileHeight)).getTile().getProperties().containsKey("blocked");
             }
         }
         //react to y collision
@@ -215,8 +226,8 @@ public class Player extends Sprite implements InputProcessor{
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         switch(button){
             case Buttons.LEFT:
-                projectiles.add(new Projectile(shootingSpeed, getX(), getY(), screenX, screenY, worldWidth, worldHeight));
-
+                //System.out.println("mouseX is: " + screenX + " mouseY is: " + screenY + " x is: " + getX() + " y is: " + getY());
+                projectiles.add(new Projectile(shootingSpeed, getX() + (width/2), getY() - (height/2), screenX, screenY, worldWidth, worldHeight));
         }
         return false;
     }
@@ -232,7 +243,12 @@ public class Player extends Sprite implements InputProcessor{
     }
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        // TODO Auto-generated method stub
+        // System.out.println("x: " + screenX + " y: " + screenY);
+        mouseX = screenX*(worldWidth/Gdx.graphics.getWidth());
+        mouseY = screenY*(worldHeight/Gdx.graphics.getHeight());
+        diffX = mouseX - getX();
+        diffY = mouseY - getY();
+        angle = (float) Math.atan2(diffY, diffX);
         return false;
     }
     @Override

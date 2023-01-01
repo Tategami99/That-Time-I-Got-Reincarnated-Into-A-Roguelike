@@ -1,26 +1,23 @@
 package com.unanglaro.topdown.main;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
 import java.lang.Math;
 
 public class Projectile {
-    private Vector2 velocity = new Vector2();
+    private Vector2 velocity;
     private static TextureRegion projectileTexture;
     private static AssetRenderer renderer;
 
-    float speed, x, y, mouseX, mouseY, worldWidth, worldHeight;
+    float x, y, worldWidth, worldHeight, angle;
 
     public boolean remove = false;
 
     public Projectile(float speed, float x, float y, float mouseX, float mouseY, float worldWidth, float worldHeight){
-        this.speed = speed;
         this.x = x;
         this.y = y;
-        this.mouseX = mouseX;
-        this.mouseY = mouseY;
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
 
@@ -32,26 +29,15 @@ public class Projectile {
         if(projectileTexture == null){
             projectileTexture = renderer.arrowAnimation.getKeyFrame(0);
         }
-
-        float xComponent, yComponent;
-
-        if(mouseX - x == 0){
-            xComponent = 0;
-        }
-        else{
-            xComponent = ((mouseX - x)/50)*speed;
-        }
         
-        if(mouseY - y == 0){
-            yComponent = 0;
-        }
-        else{
-            yComponent = ((mouseY - y)/30)*-speed;
-        }
-
-        velocity = new Vector2(xComponent,yComponent);
-
-        System.out.println("mouseX is: " + mouseX + " mouseY is: " + mouseY + " x is: " + x + " y is: " + y + " velocityX is: " + velocity.x + " velocityY is: " + velocity.y);
+        float diffX = mouseX*(worldWidth/Gdx.graphics.getWidth()) - x;
+        float diffY = mouseY*(worldHeight/Gdx.graphics.getHeight()) - (worldHeight - y);
+        angle = (float) Math.atan2(diffY, diffX);
+        float velX = (float) (Math.cos(angle));
+        float velY = (float) (Math.sin(angle));
+        velocity = new Vector2(velX, -velY);
+        velocity.nor();
+        velocity.scl(speed);
     }
 
     public void update(float getDeltaTime){
@@ -66,6 +52,6 @@ public class Projectile {
     }
 
     public void render(Batch batch){
-        batch.draw(projectileTexture, x, y);
+        batch.draw(projectileTexture, x, y, 0, projectileTexture.getRegionHeight(), projectileTexture.getRegionWidth(), projectileTexture.getRegionHeight(), 1, 1, (float) (90 - Math.toDegrees(angle)));
     }
 }

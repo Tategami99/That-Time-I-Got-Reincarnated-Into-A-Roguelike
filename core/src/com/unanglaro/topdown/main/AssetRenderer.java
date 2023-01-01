@@ -45,6 +45,10 @@ public class AssetRenderer {
     //player stuff
     public Texture playerMoveTexture;
     public Animation<TextureRegion> playerMoveAnimation;
+    
+    //player items stuff
+    public Texture playerBowTexture;
+    public TextureRegion playerBowTextureRegion;
 
     //overworld stuff
     public TiledMap overworldMap;
@@ -137,6 +141,14 @@ public class AssetRenderer {
     }
     public void playerDispose(){
         playerMoveTexture.dispose();
+    }
+
+    public void playerItemsLoad(){
+        playerBowTexture = new Texture("Projectiles/bow.png");
+        playerBowTextureRegion = new TextureRegion(playerBowTexture);
+    }
+    public void playerItemsDispose(){
+        playerBowTexture.dispose();
     }
 
     public void overworldLoadShow(){
