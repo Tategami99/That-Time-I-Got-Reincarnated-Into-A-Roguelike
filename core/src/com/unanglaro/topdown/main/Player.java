@@ -18,7 +18,7 @@ public class Player extends Sprite implements InputProcessor{
     private float width, height;
     private float colliderX, colliderY;
     private Vector2 velocity = new Vector2();
-    private float speed = 120f;
+    private float speed = DataStorage.playerSpeed;
     private float scaleAmount = 0.75f;
     private float mouseX, mouseY, diffX, diffY, angle;
 

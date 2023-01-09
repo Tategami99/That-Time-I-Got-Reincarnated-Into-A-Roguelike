@@ -1,6 +1,7 @@
 package com.unanglaro.topdown.main;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import java.util.List;
@@ -20,11 +21,15 @@ public class DialogueManager{
 
     private Stage stage;
     private rpgGame game;
+    private ScreenAdapter screen;
+    private String action;
 
-    DialogueManager(Stage stage){
+    DialogueManager(Stage stage, Integer start, Integer end, String action){
         System.out.println("dialogue opened");
         this.stage = stage;
-
+        this.start = start;
+        this.end = end;
+        this.action = action;
         converter.convert();
         renderer.dialogueUILoad();
 
@@ -32,13 +37,15 @@ public class DialogueManager{
         speaker = 0;
         words = speaker + converter.elementsPerRow;
     }
-    DialogueManager(rpgGame game, Stage stage, Integer start, Integer end, Boolean closeOnEnd){
+    DialogueManager(rpgGame game, Stage stage, Integer start, Integer end, Boolean closeOnEnd, ScreenAdapter screen, String action){
         System.out.println("dialogue opened");
         this.game = game;
+        this.screen = screen;
         this.stage = stage;
         this.start = start;
         this.end = end;
         this.closeOnEnd = closeOnEnd;
+        this.action = action;//pass in null for nothing to happen
 
         converter.convert();
         renderer.dialogueUILoad();
@@ -89,9 +96,22 @@ public class DialogueManager{
         stage.addActor(continueButton);
     }
     public void endConversation(){
+        performAction();
         continueButton.remove();
     }
     public void endConversationAndClose(){
-        game.setScreen(new Overworld(game));
+        performAction();
+        game.setScreen(screen);
+    }
+
+    public void performAction(){
+        if(action == "initializePlayer"){
+            DataStorage.playerName = null;
+            DataStorage.playerLevel = 1;
+            DataStorage.playerAttack = 10;
+            DataStorage.playerDefense = 10;
+            DataStorage.playerSpeed = 120;
+            DataStorage.playerHealth = 100;
+        }
     }
 }

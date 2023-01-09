@@ -37,7 +37,7 @@ public class PauseMenu extends Group{
         createButton(renderer.saveGameDrawable).addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y) {
-                System.out.println("clicked and saved");
+                DataManager.SaveData();
             }
         });
         createButton(renderer.mainMenuDrawable).addListener(new ClickListener(){

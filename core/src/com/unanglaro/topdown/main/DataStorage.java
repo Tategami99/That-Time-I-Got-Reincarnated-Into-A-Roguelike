@@ -1,10 +1,14 @@
 package com.unanglaro.topdown.main;
 
-public class DataStorage{
+public class DataStorage implements java.io.Serializable{
     DataStorage(){
 
     }
-    //player data
-    public String playerName;
-    public int playerLevel, playerAttack, playerDefense, playerSpeed, playerHealth;
+
+    public static String playerName;
+    public static int playerLevel,
+    playerAttack,
+    playerDefense,
+    playerSpeed,
+    playerHealth;
 }

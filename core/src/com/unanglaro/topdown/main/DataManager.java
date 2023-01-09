@@ -1,21 +1,20 @@
 package com.unanglaro.topdown.main;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 
 public class DataManager {
     DataManager(){
 
     }
 
-    //data
-    public static String pName;
-    public static int pLevel, pAttack, pDefense, pSpeed, pHealth;
+    public static class Data implements java.io.Serializable{
+        public static String playerName;
+        public static int playerLevel,
+        playerAttack,
+        playerDefense,
+        playerSpeed,
+        playerHealth;
+    }
 
     public static void SaveData(){
         try{
@@ -23,17 +22,17 @@ public class DataManager {
             BufferedOutputStream bos = new BufferedOutputStream(fos);
             ObjectOutputStream oos = new ObjectOutputStream(bos);
 
-            DataStorage dataStorage = new DataStorage();
+            //Data
+            Data.playerName = DataStorage.playerName;
+            Data.playerLevel = DataStorage.playerLevel;
+            Data.playerAttack = DataStorage.playerAttack;
+            Data.playerDefense = DataStorage.playerDefense;
+            Data.playerSpeed = DataStorage.playerSpeed;
+            Data.playerHealth = DataStorage.playerHealth;
 
-            //data
-            dataStorage.playerName = pName;
-            dataStorage.playerLevel = pLevel;
-            dataStorage.playerAttack = pAttack;
-            dataStorage.playerDefense = pDefense;
-            dataStorage.playerSpeed = pSpeed;
-            dataStorage.playerHealth = pHealth;
+            System.out.println(Data.playerName);
 
-            oos.writeObject(dataStorage);
+            oos.writeObject(new Data());
             oos.close();
         }catch(IOException e){
             e.printStackTrace();
@@ -45,15 +44,18 @@ public class DataManager {
             BufferedInputStream bis = new BufferedInputStream(fis);
             ObjectInputStream ois = new ObjectInputStream(bis);
 
-            DataStorage dataStorage = (DataStorage)ois.readObject();
+            Data data = (Data)ois.readObject();
             
-            //data
-            pName = dataStorage.playerName;
-            pLevel = dataStorage.playerLevel;
-            pAttack = dataStorage.playerAttack;
-            pDefense = dataStorage.playerDefense;
-            pSpeed = dataStorage.playerSpeed;
-            pHealth = dataStorage.playerHealth;
+
+            //Data
+            DataStorage.playerName = Data.playerName;
+            DataStorage.playerLevel = Data.playerLevel;
+            DataStorage.playerAttack = Data.playerAttack;
+            DataStorage.playerDefense = Data.playerDefense;
+            DataStorage.playerSpeed = Data.playerSpeed;
+            DataStorage.playerHealth = Data.playerHealth;
+
+            System.out.println(DataStorage.playerName);
 
             ois.close();
         }catch(IOException ex){

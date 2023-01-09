@@ -61,7 +61,7 @@ public class GameScreen extends ScreenAdapter{
         createButton(renderer.loadGameDrawable).addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y) {
-                System.out.println("clicked");
+                DataManager.LoadData();
             }
         });;
         createButton(renderer.quitDrawable).addListener(new ClickListener(){
