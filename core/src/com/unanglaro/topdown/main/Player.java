@@ -20,7 +20,7 @@ public class Player extends Sprite implements InputProcessor{
     private Vector2 velocity = new Vector2();
     private float speed = DataStorage.playerSpeed;
     private float scaleAmount = 0.75f;
-    private float mouseX, mouseY, diffX, diffY, angle;
+    private float diffX, diffY, angle;
 
     //game state variables
     public boolean isPaused = false;
@@ -32,7 +32,6 @@ public class Player extends Sprite implements InputProcessor{
     private float shootingSpeed = 150;
 
     //variables received from game world
-    private AssetRenderer renderer;
     private Stage stage;
     private TiledMapTileLayer collisionLayer;
     private float worldWidth = 1600;
@@ -43,12 +42,11 @@ public class Player extends Sprite implements InputProcessor{
         this.collisionLayer = collisionLayer;
         this.stage = stage;
 
-        renderer = new AssetRenderer();        
         pauseMenu = new PauseMenu(this, game);
         projectiles = new ArrayList<Projectile>();
         projectilesToRemove = new ArrayList<Projectile>();
 
-        renderer.playerItemsLoad();
+        AssetRenderer.playerItemsLoad();
         
         scale(scaleAmount);
         width = getWidth()*scaleAmount;
@@ -74,7 +72,7 @@ public class Player extends Sprite implements InputProcessor{
         update(Gdx.graphics.getDeltaTime());
         //System.out.println("x: " + getX() + " y: " + getY());
         super.draw(spriteBatch);
-        spriteBatch.draw(renderer.playerBowTextureRegion, getX() - width/2, getY() + height/2, renderer.playerBowTextureRegion.getRegionWidth()/2, 0, renderer.playerBowTextureRegion.getRegionWidth(), renderer.playerBowTextureRegion.getRegionHeight(), 1, 1,(float) (90 - Math.toDegrees(angle)));
+        spriteBatch.draw(AssetRenderer.playerBowTextureRegion, getX() - width/2, getY() + height/2, AssetRenderer.playerBowTextureRegion.getRegionWidth()/2, 0, AssetRenderer.playerBowTextureRegion.getRegionWidth(), AssetRenderer.playerBowTextureRegion.getRegionHeight(), 1, 1,(float) (90 - Math.toDegrees(angle)));
 
         //render arrows
         if (projectiles.size() > 0){
@@ -244,10 +242,8 @@ public class Player extends Sprite implements InputProcessor{
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
         // System.out.println("x: " + screenX + " y: " + screenY);
-        mouseX = screenX*(worldWidth/Gdx.graphics.getWidth());
-        mouseY = screenY*(worldHeight/Gdx.graphics.getHeight());
-        diffX = mouseX - getX();
-        diffY = mouseY - getY();
+        diffX = screenX*(worldWidth/Gdx.graphics.getWidth()) - getX();
+        diffY = screenY*(worldHeight/Gdx.graphics.getHeight()) - (worldHeight - getY());
         angle = (float) Math.atan2(diffY, diffX);
         return false;
     }

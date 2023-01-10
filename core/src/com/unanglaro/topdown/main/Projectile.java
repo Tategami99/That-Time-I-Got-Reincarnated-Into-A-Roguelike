@@ -9,7 +9,6 @@ import java.lang.Math;
 public class Projectile {
     private Vector2 velocity;
     private static TextureRegion projectileTexture;
-    private static AssetRenderer renderer;
 
     float x, y, worldWidth, worldHeight, angle;
 
@@ -21,13 +20,12 @@ public class Projectile {
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
 
-        if(renderer == null){
-            renderer = new AssetRenderer();
-            renderer.arrowProjectileLoad();
+        if(AssetRenderer.arrowAnimation == null){
+            AssetRenderer.arrowProjectileLoad();
         }
 
         if(projectileTexture == null){
-            projectileTexture = renderer.arrowAnimation.getKeyFrame(0);
+            projectileTexture = AssetRenderer.arrowAnimation.getKeyFrame(0);
         }
         
         float diffX = mouseX*(worldWidth/Gdx.graphics.getWidth()) - x;

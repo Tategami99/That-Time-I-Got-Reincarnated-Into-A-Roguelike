@@ -8,7 +8,6 @@ public class PauseMenu extends Group{
     private Player player;
     private rpgGame game;
 
-    private AssetRenderer renderer = new AssetRenderer();
     private Table pausedTable;
     private Integer worldWidth = 1600;
     private Integer worldHeight = 960;
@@ -21,30 +20,30 @@ public class PauseMenu extends Group{
 
     {
         System.out.println("called");
-        renderer.pauseScreenLoad();
+        AssetRenderer.pauseScreenLoad();
         pausedTable = new Table();
         
         pausedTable.setFillParent(true);
         this.addActor(pausedTable);
 
-        createButton(renderer.resumeDrawable).addListener(new ClickListener(){
+        createButton(AssetRenderer.resumeDrawable).addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 System.out.println("clicked");
                 player.toggleEscape();
             }
         });
-        createButton(renderer.saveGameDrawable).addListener(new ClickListener(){
+        createButton(AssetRenderer.saveGameDrawable).addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 DataManager.SaveData();
             }
         });
-        createButton(renderer.mainMenuDrawable).addListener(new ClickListener(){
+        createButton(AssetRenderer.mainMenuDrawable).addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 System.out.println("clicked");
-                renderer.pauseScreenDispose();
+                AssetRenderer.pauseScreenDispose();
                 game.setScreen(new GameScreen(game));
             }
         });

@@ -13,67 +13,67 @@ import com.badlogic.gdx.scenes.scene2d.utils.*;
 
 public class AssetRenderer {
     //testing
-    public Texture testingTexture;
-    public Sprite testingSprite;
+    public static Texture testingTexture;
+    public static Sprite testingSprite;
 
     //main menu stuff
-    public Texture backgroundTexture;
-    public Sprite spriteBackground;
-    public Texture newGameTexture;
-    public Drawable newGameDrawable;
-    public Texture loadGameTexture;
-    public Drawable loadGameDrawable;
-    public Texture quitTexture;
-    public Drawable quitDrawable;
+    public static Texture backgroundTexture;
+    public static Sprite spriteBackground;
+    public static Texture newGameTexture;
+    public static Drawable newGameDrawable;
+    public static Texture loadGameTexture;
+    public static Drawable loadGameDrawable;
+    public static Texture quitTexture;
+    public static Drawable quitDrawable;
 
     //opening screen stuff
-    public Texture openingBackgroundTexture;
-    public Sprite openingBackgroundSprite;
+    public static Texture openingBackgroundTexture;
+    public static Sprite openingBackgroundSprite;
 
     //option screen stuff
-    public Texture resumeTexture;
-    public Drawable resumeDrawable;
-    public Texture saveGameTexture;
-    public Drawable saveGameDrawable;
-    public Texture mainMenuTexture;
-    public Drawable mainMenuDrawable;
+    public static Texture resumeTexture;
+    public static Drawable resumeDrawable;
+    public static Texture saveGameTexture;
+    public static Drawable saveGameDrawable;
+    public static Texture mainMenuTexture;
+    public static Drawable mainMenuDrawable;
     
     //dialogue stuff
-    public Skin dialogueBox;
-    public BitmapFont font = new BitmapFont();
+    public static Skin dialogueBox;
+    public static BitmapFont font = new BitmapFont();
 
     //player stuff
-    public Texture playerMoveTexture;
-    public Animation<TextureRegion> playerMoveAnimation;
+    public static Texture playerMoveTexture;
+    public static Animation<TextureRegion> playerMoveAnimation;
     
     //player items stuff
-    public Texture playerBowTexture;
-    public TextureRegion playerBowTextureRegion;
+    public static Texture playerBowTexture;
+    public static TextureRegion playerBowTextureRegion;
 
     //overworld stuff
-    public TiledMap overworldMap;
-    public OrthogonalTiledMapRenderer overworldRenderer;
-    MapProperties overworldMapProperties;
+    public static TiledMap overworldMap;
+    public static OrthogonalTiledMapRenderer overworldRenderer;
+    public static MapProperties overworldMapProperties;
 
     //arrow projectile stuff
-    public Texture arrowTexture;
-    public Animation<TextureRegion> arrowAnimation;
+    public static Texture arrowTexture;
+    public static Animation<TextureRegion> arrowAnimation;
 
-  AssetRenderer(){
+  public AssetRenderer(){
         
     }  
 
-    public void testingLoad(){
+    public static void testingLoad(){
         testingTexture = new Texture("MainMenu/nino6.jpg");
         testingTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         testingSprite = new Sprite(testingTexture);
         testingSprite.flip(false, true);
     }
-    public void testingDispose(){
+    public static void testingDispose(){
         testingTexture.dispose();
     }
 
-    public void mainMenuLoad(){
+    public static void mainMenuLoad(){
         //background
         backgroundTexture = new Texture("MainMenu/background.png");
         backgroundTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -93,25 +93,25 @@ public class AssetRenderer {
         quitDrawable = new TextureRegionDrawable(new TextureRegion(quitTexture));
 
     }
-    public void mainMenuDispose(){
+    public static void mainMenuDispose(){
         backgroundTexture.dispose();
         newGameTexture.dispose();
         loadGameTexture.dispose();
         quitTexture.dispose();
     }
 
-    public void openingScreenLoad(){
+    public static void openingScreenLoad(){
         //background
         openingBackgroundTexture = new Texture("OpeningScreen/ninoDarkMode.png");
         openingBackgroundTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         openingBackgroundSprite = new Sprite(openingBackgroundTexture);
         openingBackgroundSprite.flip(false, true);
     }
-    public void openingScreenDispose(){
+    public static void openingScreenDispose(){
         openingBackgroundTexture.dispose();
     }
 
-    public void pauseScreenLoad(){
+    public static void pauseScreenLoad(){
         //resume button
         resumeTexture = new Texture("UserInterface/resume.png");
         resumeDrawable = new TextureRegionDrawable(new TextureRegion(resumeTexture));
@@ -124,49 +124,49 @@ public class AssetRenderer {
         mainMenuTexture = new Texture("UserInterface/mainmenu.png");
         mainMenuDrawable = new TextureRegionDrawable(new TextureRegion(mainMenuTexture));
     }
-    public void pauseScreenDispose(){
+    public static void pauseScreenDispose(){
         resumeTexture.dispose();
         saveGameTexture.dispose();
         mainMenuTexture.dispose();
     }
 
-    public void dialogueUILoad(){
+    public static void dialogueUILoad(){
         //background
         dialogueBox = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
     }
     
-    public void playerLoad(Integer FRAME_COLS, Integer FRAME_ROWS, Float frameInterval){
+    public static void playerLoad(Integer FRAME_COLS, Integer FRAME_ROWS, Float frameInterval){
         playerMoveTexture = new Texture("Spritesheets/playermove.png");
         playerMoveAnimation = createAnimation(playerMoveTexture, FRAME_COLS, FRAME_ROWS, frameInterval);
     }
-    public void playerDispose(){
+    public static void playerDispose(){
         playerMoveTexture.dispose();
     }
 
-    public void playerItemsLoad(){
+    public static void playerItemsLoad(){
         playerBowTexture = new Texture("Projectiles/bow.png");
         playerBowTextureRegion = new TextureRegion(playerBowTexture);
     }
-    public void playerItemsDispose(){
+    public static void playerItemsDispose(){
         playerBowTexture.dispose();
     }
 
-    public void overworldLoadShow(){
+    public static void overworldLoadShow(){
         overworldMap = new TmxMapLoader().load("assets/Tiled/Overworld.tmx");
         overworldRenderer = new OrthogonalTiledMapRenderer(overworldMap);
         overworldMapProperties = overworldMap.getProperties();
     }
-    public void overworldDispose(){
+    public static void overworldDispose(){
         overworldMap.dispose();
         overworldRenderer.dispose();
     }
-    public void arrowProjectileLoad(){
+    public static void arrowProjectileLoad(){
         arrowTexture = new Texture("Projectiles/arrow.png");
         arrowAnimation = createAnimation(arrowTexture, 2, 2, 0.05f);
     }
 
     // non loading methods
-    public Animation<TextureRegion> createAnimation( Texture texture, Integer FRAME_COLS, Integer FRAME_ROWS, Float frameInterval){
+    public static Animation<TextureRegion> createAnimation( Texture texture, Integer FRAME_COLS, Integer FRAME_ROWS, Float frameInterval){
         TextureRegion[][] tmp = TextureRegion.split(texture, texture.getWidth()/FRAME_COLS, texture.getHeight()/FRAME_ROWS);
         TextureRegion[] frames = new TextureRegion[FRAME_COLS * FRAME_ROWS];
         int index = 0;

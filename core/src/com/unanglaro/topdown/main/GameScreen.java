@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 public class GameScreen extends ScreenAdapter{
     private rpgGame game;
-    private AssetRenderer renderer = new AssetRenderer();
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private Stage stage;
@@ -23,7 +22,7 @@ public class GameScreen extends ScreenAdapter{
 
         batch = new SpriteBatch();
         
-        renderer.mainMenuLoad();
+        AssetRenderer.mainMenuLoad();
     }
 
     @Override
@@ -38,7 +37,7 @@ public class GameScreen extends ScreenAdapter{
 
         batch.begin();
         //render code
-            batch.draw(renderer.spriteBackground, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            batch.draw(AssetRenderer.spriteBackground, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
 
         stage.draw();
@@ -51,20 +50,20 @@ public class GameScreen extends ScreenAdapter{
         mainTable.setFillParent(true);
         stage.addActor(mainTable);
 
-        createButton(renderer.newGameDrawable).addListener(new ClickListener(){
+        createButton(AssetRenderer.newGameDrawable).addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 System.out.println("clicked");
                 game.setScreen(new OpeningScreen(game));
             }
         });
-        createButton(renderer.loadGameDrawable).addListener(new ClickListener(){
+        createButton(AssetRenderer.loadGameDrawable).addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 DataManager.LoadData();
             }
         });;
-        createButton(renderer.quitDrawable).addListener(new ClickListener(){
+        createButton(AssetRenderer.quitDrawable).addListener(new ClickListener(){
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 Gdx.app.exit();
@@ -77,7 +76,7 @@ public class GameScreen extends ScreenAdapter{
     @Override
     public void hide() {
         dispose();
-        renderer.mainMenuDispose();
+        AssetRenderer.mainMenuDispose();
     }
     @Override
     public void dispose() {
