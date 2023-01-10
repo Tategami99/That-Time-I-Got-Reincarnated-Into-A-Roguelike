@@ -29,7 +29,7 @@ public class Player extends Sprite implements InputProcessor{
     private PauseMenu pauseMenu;
     private ArrayList<Projectile> projectiles;
     private ArrayList<Projectile> projectilesToRemove;
-    private float shootingSpeed = 150;
+    private float shootingSpeed = 300;
 
     //variables received from game world
     private Stage stage;
@@ -115,7 +115,10 @@ public class Player extends Sprite implements InputProcessor{
             if(!collisionX && collisionLayer.getCell((int) (getX()/tileWdith) ,(int) (getY()/tileHeight)) != null){
                 collisionX = collisionLayer.getCell((int) (getX()/tileWdith) ,(int) (getY()/tileHeight)).getTile().getProperties().containsKey("blocked");
             }
-
+            // left side of game world
+            if(getX() + velocity.x*delta < 0){
+                collisionX = true;
+            }
         }
         else if(velocity.x >0){
             //top right tile
@@ -129,6 +132,10 @@ public class Player extends Sprite implements InputProcessor{
             //bottom right tile
             if(!collisionX && collisionLayer.getCell((int) ((getX() + width) / tileWdith), (int) (getY() / tileHeight)) != null){
                 collisionX = collisionLayer.getCell((int) ((getX() + width) / tileWdith), (int) (getY() / tileHeight)).getTile().getProperties().containsKey("blocked");
+            }
+            //right side of game world
+            if(getX() + width + velocity.x*delta > worldWidth){
+                collisionX = true;
             }
         }
         //react to x collision
@@ -153,6 +160,10 @@ public class Player extends Sprite implements InputProcessor{
             if(!collisionY && collisionLayer.getCell((int) ((getX() + width) / tileWdith),(int) (getY() / tileHeight)) != null){
                 collisionY = collisionLayer.getCell((int) ((getX() + width) / tileWdith),(int) (getY() / tileHeight)).getTile().getProperties().containsKey("blocked");
             }
+            //bottom side of game world
+            if(getY() + velocity.y*delta < 0){
+                collisionY = true;
+            }
         }
         else if(velocity.y >0){
             //top left tile
@@ -167,6 +178,10 @@ public class Player extends Sprite implements InputProcessor{
             //top right tile
             if(!collisionY && collisionLayer.getCell((int) ((getX() + width / 2) / tileWdith),(int) ((getY() + height / 2) / tileHeight)) != null){
                 collisionY = collisionLayer.getCell((int) ((getX() + width / 2) / tileWdith),(int) ((getY() + height / 2) / tileHeight)).getTile().getProperties().containsKey("blocked");
+            }
+            //top side of game world
+            if(getY() + height + velocity.y*delta > worldHeight){
+                collisionY = true;
             }
         }
         //react to y collision

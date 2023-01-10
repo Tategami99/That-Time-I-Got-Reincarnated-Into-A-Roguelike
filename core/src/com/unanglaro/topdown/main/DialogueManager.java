@@ -110,7 +110,7 @@ public class DialogueManager{
             DataStorage.playerLevel = 1;
             DataStorage.playerAttack = 10;
             DataStorage.playerDefense = 10;
-            DataStorage.playerSpeed = 120;
+            DataStorage.playerSpeed = 240;
             DataStorage.playerHealth = 100;
         }
     }

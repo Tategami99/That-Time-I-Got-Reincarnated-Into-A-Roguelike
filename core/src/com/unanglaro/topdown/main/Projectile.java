@@ -43,7 +43,8 @@ public class Projectile {
 
         y += velocity.y*getDeltaTime;
 
-        if(x < 0 || x > worldWidth || y < 0 || y > worldHeight){
+        //detect collision within world coords
+        if(x < 0 || x > worldWidth || y < 0 || y > worldHeight){// collision within world bounds
             remove = true;
             System.out.println("remove called");
         }
