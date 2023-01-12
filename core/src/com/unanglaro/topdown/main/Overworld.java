@@ -12,7 +12,10 @@ public class Overworld extends ScreenAdapter{
     private Integer worldHeight;
 
     private rpgGame game;
+
+    //entities in game
     private Player player;
+    private EntityManager entities;
 
     private OrthographicCamera camera;
     private Stage stage;
@@ -40,9 +43,11 @@ public class Overworld extends ScreenAdapter{
         camera.update();
         AssetRenderer.overworldRenderer.getBatch().setProjectionMatrix(camera.combined);
         player.updateNonRender();
+        entities.update(delta);
 
         AssetRenderer.overworldRenderer.getBatch().begin();
             player.draw(AssetRenderer.overworldRenderer.getBatch());
+            entities.render(AssetRenderer.overworldRenderer.getBatch(), delta);
         AssetRenderer.overworldRenderer.getBatch().end();
 
         stage.draw();
@@ -59,6 +64,8 @@ public class Overworld extends ScreenAdapter{
 
         player = new Player(AssetRenderer.playerMoveAnimation.getKeyFrame(1), (TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1), game, stage);
         player.setPosition(20 * player.getCollisionsLayer().getTileWidth(), 20 * player.getCollisionsLayer().getTileHeight());
+
+        entities = new EntityManager((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1));
 
         Gdx.input.setInputProcessor(player);
 	}

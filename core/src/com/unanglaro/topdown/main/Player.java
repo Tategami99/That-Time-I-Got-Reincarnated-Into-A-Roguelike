@@ -93,7 +93,20 @@ public class Player extends Sprite implements InputProcessor{
         else if (velocity.y < speed){
             velocity.y = -speed;
         }
+        if(velocity.x > speed){
+            velocity.x = speed;
+        }
+        else if (velocity.x == 0){
+            velocity.x = 0;
+        }
+        else if (velocity.x < speed){
+            velocity.x = -speed;
+        }
         
+        checkCollisions(delta);
+    }
+
+    private void checkCollisions(float delta){
         //save old position
         float oldX = getX(), oldY = getY(), tileWdith = collisionLayer.getTileWidth(), tileHeight = collisionLayer.getTileHeight();
         boolean collisionX = false, collisionY = false;
@@ -246,12 +259,10 @@ public class Player extends Sprite implements InputProcessor{
     }
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        // TODO Auto-generated method stub
         return false;
     }
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        // TODO Auto-generated method stub
         return false;
     }
     @Override
@@ -264,7 +275,6 @@ public class Player extends Sprite implements InputProcessor{
     }
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        // TODO Auto-generated method stub
         return false;
     }
     

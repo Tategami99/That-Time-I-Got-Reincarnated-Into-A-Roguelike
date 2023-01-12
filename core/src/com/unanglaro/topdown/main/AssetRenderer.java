@@ -59,6 +59,10 @@ public class AssetRenderer {
     public static Texture arrowTexture;
     public static Animation<TextureRegion> arrowAnimation;
 
+    //spider enemy stuff
+    public static Texture spiderTexture;
+    public static Animation<TextureRegion> spiderAnimation;
+
   public AssetRenderer(){
         
     }  
@@ -163,6 +167,16 @@ public class AssetRenderer {
     public static void arrowProjectileLoad(){
         arrowTexture = new Texture("Projectiles/arrow.png");
         arrowAnimation = createAnimation(arrowTexture, 2, 2, 0.05f);
+    }
+    public static void arrowProjectileDispose(){
+        arrowTexture.dispose();
+    }
+    public static void spiderEnemyLoad(){
+        spiderTexture = new Texture("Spritesheets/spidermove.png");
+        spiderAnimation = createAnimation(arrowTexture, 4, 1, 0.05f);
+    }
+    public static void spiderEnemyDispose(){
+        spiderTexture.dispose();
     }
 
     // non loading methods

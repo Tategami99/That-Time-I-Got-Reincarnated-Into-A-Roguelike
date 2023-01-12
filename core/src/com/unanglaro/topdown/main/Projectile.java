@@ -1,6 +1,7 @@
 package com.unanglaro.topdown.main;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -8,13 +9,17 @@ import java.lang.Math;
 
 public class Projectile {
     private Vector2 velocity;
-    private static TextureRegion projectileTexture;
+    private static Animation<TextureRegion> arrowAnimation;
 
-    float x, y, worldWidth, worldHeight, angle;
+    private float x, y, width, height, worldWidth, worldHeight, angle;
+    private float timeCreated = Gdx.graphics.getDeltaTime();
+    private float elapsedTime;
 
     public boolean remove = false;
 
     public Projectile(float speed, float x, float y, float mouseX, float mouseY, float worldWidth, float worldHeight){
+        System.out.println("clicked");
+        arrowAnimation = AssetRenderer.arrowAnimation;
         this.x = x;
         this.y = y;
         this.worldWidth = worldWidth;
@@ -22,10 +27,9 @@ public class Projectile {
 
         if(AssetRenderer.arrowAnimation == null){
             AssetRenderer.arrowProjectileLoad();
-        }
-
-        if(projectileTexture == null){
-            projectileTexture = AssetRenderer.arrowAnimation.getKeyFrame(0);
+            arrowAnimation = AssetRenderer.arrowAnimation;
+            width = AssetRenderer.arrowTexture.getWidth()/2;
+            height = AssetRenderer.arrowTexture.getHeight()/2;
         }
         
         float diffX = mouseX*(worldWidth/Gdx.graphics.getWidth()) - x;
@@ -46,11 +50,12 @@ public class Projectile {
         //detect collision within world coords
         if(x < 0 || x > worldWidth || y < 0 || y > worldHeight){// collision within world bounds
             remove = true;
-            System.out.println("remove called");
         }
     }
 
     public void render(Batch batch){
-        batch.draw(projectileTexture, x, y, 0, projectileTexture.getRegionHeight(), projectileTexture.getRegionWidth(), projectileTexture.getRegionHeight(), 1, 1, (float) (90 - Math.toDegrees(angle)));
+        elapsedTime += Gdx.graphics.getDeltaTime() - timeCreated;
+        batch.draw(arrowAnimation.getKeyFrame(elapsedTime, true), x, y, 0, height, width, height, 1, 1, (float) (90 - Math.toDegrees(angle)));
+        System.out.println(timeCreated);
     }
 }
