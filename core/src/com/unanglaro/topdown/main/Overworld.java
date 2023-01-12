@@ -23,8 +23,6 @@ public class Overworld extends ScreenAdapter{
     
     Overworld(rpgGame game){
         this.game = game;
-
-        AssetRenderer.playerLoad(4, 1, 0.05f);
         
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -46,7 +44,7 @@ public class Overworld extends ScreenAdapter{
         entities.update(delta);
 
         AssetRenderer.overworldRenderer.getBatch().begin();
-            player.draw(AssetRenderer.overworldRenderer.getBatch());
+            player.draw(AssetRenderer.overworldRenderer.getBatch(), delta);
             entities.render(AssetRenderer.overworldRenderer.getBatch(), delta);
         AssetRenderer.overworldRenderer.getBatch().end();
 
@@ -62,10 +60,10 @@ public class Overworld extends ScreenAdapter{
 
         stage = new Stage(viewport, AssetRenderer.overworldRenderer.getBatch());
 
-        player = new Player(AssetRenderer.playerMoveAnimation.getKeyFrame(1), (TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1), game, stage);
-        player.setPosition(20 * player.getCollisionsLayer().getTileWidth(), 20 * player.getCollisionsLayer().getTileHeight());
+        player = new Player((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1), game, stage, 20 * ((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1)).getTileWidth(), 20 * ((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1)).getTileHeight());
 
         entities = new EntityManager((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1));
+        entities.createEntities(player, 1, 0);
 
         Gdx.input.setInputProcessor(player);
 	}
@@ -78,6 +76,9 @@ public class Overworld extends ScreenAdapter{
         stage.dispose();
         AssetRenderer.overworldDispose();
         AssetRenderer.playerDispose();
+        AssetRenderer.playerItemsDispose();
+        AssetRenderer.spiderEnemyDispose();
+        AssetRenderer.arrowProjectileDispose();
 	}
 
     //my methods

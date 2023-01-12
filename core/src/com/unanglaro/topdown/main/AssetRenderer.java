@@ -166,14 +166,14 @@ public class AssetRenderer {
     }
     public static void arrowProjectileLoad(){
         arrowTexture = new Texture("Projectiles/arrow.png");
-        arrowAnimation = createAnimation(arrowTexture, 2, 2, 0.05f);
+        arrowAnimation = createAnimation(arrowTexture, 2, 2, 0.075f);
     }
     public static void arrowProjectileDispose(){
         arrowTexture.dispose();
     }
     public static void spiderEnemyLoad(){
         spiderTexture = new Texture("Spritesheets/spidermove.png");
-        spiderAnimation = createAnimation(arrowTexture, 4, 1, 0.05f);
+        spiderAnimation = createAnimation(spiderTexture, 4, 1, 0.1f);
     }
     public static void spiderEnemyDispose(){
         spiderTexture.dispose();

@@ -12,8 +12,7 @@ public class Projectile {
     private static Animation<TextureRegion> arrowAnimation;
 
     private float x, y, width, height, worldWidth, worldHeight, angle;
-    private float timeCreated = Gdx.graphics.getDeltaTime();
-    private float elapsedTime;
+    private static float elapsedTime = 0;
 
     public boolean remove = false;
 
@@ -25,12 +24,9 @@ public class Projectile {
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
 
-        if(AssetRenderer.arrowAnimation == null){
-            AssetRenderer.arrowProjectileLoad();
-            arrowAnimation = AssetRenderer.arrowAnimation;
-            width = AssetRenderer.arrowTexture.getWidth()/2;
-            height = AssetRenderer.arrowTexture.getHeight()/2;
-        }
+        arrowAnimation = AssetRenderer.arrowAnimation;
+        width = AssetRenderer.arrowTexture.getWidth()/2;
+        height = AssetRenderer.arrowTexture.getHeight()/2;
         
         float diffX = mouseX*(worldWidth/Gdx.graphics.getWidth()) - x;
         float diffY = mouseY*(worldHeight/Gdx.graphics.getHeight()) - (worldHeight - y);
@@ -54,8 +50,7 @@ public class Projectile {
     }
 
     public void render(Batch batch){
-        elapsedTime += Gdx.graphics.getDeltaTime() - timeCreated;
+        elapsedTime += Gdx.graphics.getDeltaTime();
         batch.draw(arrowAnimation.getKeyFrame(elapsedTime, true), x, y, 0, height, width, height, 1, 1, (float) (90 - Math.toDegrees(angle)));
-        System.out.println(timeCreated);
     }
 }

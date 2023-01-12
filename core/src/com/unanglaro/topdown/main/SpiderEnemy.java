@@ -1,10 +1,14 @@
 package com.unanglaro.topdown.main;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 
 public class SpiderEnemy{
     private static Animation<TextureRegion> spiderAnimation;
@@ -13,43 +17,50 @@ public class SpiderEnemy{
     private float scaleAmount = 2;
     private float width, height;
     private float xPos, yPos;
+    private Player player;
+    private static float playerX, playerY;
+    private static TiledMapTile playerTile;
     private float elapsedTime = 0f;
-    private Vector2 velocity;
+    private Vector2 velocity = new Vector2();
     private float speed;
     private TiledMapTileLayer collisionLayer;
     private float worldWidth = 1600;
     private float worldHeight = 900;
+    private boolean runPathfinding = true;
 
-    public SpiderEnemy(TiledMapTileLayer collisionLayer, boolean big){
+    public SpiderEnemy(Player player, TiledMapTileLayer collisionLayer, boolean big, float xPos, float yPos){
+        this.player = player;
         this.collisionLayer = collisionLayer;
+        this.xPos = xPos;
+        this.yPos = yPos;
 
-        if(spiderAnimation == null){
-            AssetRenderer.spiderEnemyLoad();
-            spiderAnimation = AssetRenderer.spiderAnimation;
-            width = AssetRenderer.spiderTexture.getWidth()/4;
-            height = AssetRenderer.spiderTexture.getHeight()/1;
-        }
+        spiderAnimation = AssetRenderer.spiderAnimation;
+        width = AssetRenderer.spiderTexture.getWidth()/4;
+        height = AssetRenderer.spiderTexture.getHeight()/1;
 
         if(big){
             health = 2;
             //scale(scaleAmount);
             width *= scaleAmount;
             height *= scaleAmount;
+            speed = DataStorage.playerSpeed*0.95f;
         }
         else{
             health = 1;
+            speed = DataStorage.playerSpeed*1.05f;
         }
     }
 
     public void render(Batch spriteBatch, float deltaTime){
         elapsedTime += deltaTime;
-        spriteBatch.draw(spiderAnimation.getKeyFrame(elapsedTime, true), xPos, yPos);
+        spriteBatch.draw(spiderAnimation.getKeyFrame(elapsedTime, true), xPos, yPos, width, height);
     }
 
     public void update(float delta){
         pathfinding();
 
         //limit speed
+        /*
         if (velocity.y > speed){
             velocity.y = speed;
         }
@@ -68,7 +79,7 @@ public class SpiderEnemy{
         else if (velocity.x < speed){
             velocity.x = -speed;
         }
-
+        */
         checkCollisions(delta);
     }
 
@@ -171,6 +182,20 @@ public class SpiderEnemy{
     }
 
     private void pathfinding(){
+        playerX = player.getPlayerX();
+        playerY = player.getPlayerY();
 
+        float diffX = playerX*(worldWidth/Gdx.graphics.getWidth()) - xPos;
+        float diffY = playerY*(worldHeight/Gdx.graphics.getHeight()) - (worldHeight - yPos);
+        float angle = (float) Math.atan2(diffY, diffX);
+        float velX = (float) Math.cos(angle);
+        float velY = (float) Math.sin(angle);
+        //velocity.x = velX;
+        //velocity.y = -velY;
+        velocity.x = velX;
+        velocity.y = -velY;
+        velocity.nor();
+        velocity.scl(speed);
+        //System.out.println("velX: " + velocity.x + "  velY: " + velocity.y);
     }
 }

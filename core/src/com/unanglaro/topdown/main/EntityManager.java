@@ -4,17 +4,25 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import java.lang.Math;
 
 public class EntityManager {
-    public TiledMapTileLayer collisionLayer;
+    private float spawnAreaMinX = 100;
+    private float spawnAreaMaxX = 1500;
+    private float spawnAreaMinY = 100;
+    private float spawnAreaMaxY = 800;
 
-    public ArrayList<SpiderEnemy> spidersNormal = new ArrayList<SpiderEnemy>();
-    public ArrayList<SpiderEnemy> spidersNormalToRemove = new ArrayList<SpiderEnemy>();
-    public ArrayList<SpiderEnemy> spidersBig = new ArrayList<SpiderEnemy>();
-    public ArrayList<SpiderEnemy> spidersBigToRemove = new ArrayList<SpiderEnemy>();
+    private TiledMapTileLayer collisionLayer;
+
+    private ArrayList<SpiderEnemy> spidersNormal = new ArrayList<SpiderEnemy>();
+    private ArrayList<SpiderEnemy> spidersNormalToRemove = new ArrayList<SpiderEnemy>();
+    private ArrayList<SpiderEnemy> spidersBig = new ArrayList<SpiderEnemy>();
+    private ArrayList<SpiderEnemy> spidersBigToRemove = new ArrayList<SpiderEnemy>();
 
     public EntityManager(TiledMapTileLayer collisionLayer){
         this.collisionLayer = collisionLayer;
+
+        AssetRenderer.spiderEnemyLoad();
     }
 
     public void render(Batch batch, float deltaTime){
@@ -27,9 +35,18 @@ public class EntityManager {
         updateBig(delta);
     }
 
-    public void createEntities(int normalSpiders, int bigSpiders){
-        for (int index = spidersNormal.size(); index < normalSpiders; index++) {
-            spidersNormal.add(new SpiderEnemy(collisionLayer, false));
+    public void createEntities(Player player, int normalSpiders, int bigSpiders){
+        for (int index = 0; index < normalSpiders; index++) {
+            float spawnX = (float) Math.floor(Math.random()*(spawnAreaMaxX-spawnAreaMinX+ 1) + spawnAreaMinX);
+            float spawnY = (float) Math.floor(Math.random()*(spawnAreaMaxY-spawnAreaMinY+ 1) + spawnAreaMinY);
+            spidersNormal.add(new SpiderEnemy(player, collisionLayer, false, spawnX, spawnY));
+            System.out.println("enemy spawned");
+        }
+        for (int index = 0; index < bigSpiders; index++) {
+            float spawnX = (float) Math.floor(Math.random()*(spawnAreaMaxX-spawnAreaMinX+ 1) + spawnAreaMinX);
+            float spawnY = (float) Math.floor(Math.random()*(spawnAreaMaxY-spawnAreaMinY+ 1) + spawnAreaMinY);
+            spidersBig.add(new SpiderEnemy(player, collisionLayer, false, spawnX, spawnY));
+            System.out.println("x: " + spawnX + "  y: " + spawnY);
         }
     }
 
