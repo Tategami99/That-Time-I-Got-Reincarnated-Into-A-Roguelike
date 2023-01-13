@@ -43,7 +43,7 @@ public class EntityManager {
         renderBig(batch, deltaTime);
     }
 
-    public void update(float delta){
+    public void update(Player player, float delta){
         updateProjectiles(delta);
         updateNormal(delta);
         updateBig(delta);
@@ -87,11 +87,14 @@ public class EntityManager {
         if(spidersNormal.size() > 0){
             for(SpiderEnemy spider : spidersNormal){
                 spider.update(delta);
-                float oldX = spider.getSpiderOldX();
-                //System.out.println("oldX: " + oldX);
-                normalSpiderX.add(oldX);
-                normalSpiderX.set(normalSpiderX.indexOf(oldX), spider.getSpiderX());
-                //System.out.println("newX: " + spider.getSpiderX());
+                if(projectiles.size() > 0){
+                    if(collidedWithProjectile(spider.getSpiderX(), spider.getSpiderY())){
+                        spider.health -= 1;
+                    }
+                    if(spider.health == 0){
+                        spider.dead = true;
+                    }
+                }
                 if(spider.dead){
                     spidersNormalToRemove.add(spider);
                 }
@@ -105,6 +108,7 @@ public class EntityManager {
         if(spidersBig.size() > 0){
             for(SpiderEnemy spider : spidersBig){
                 spider.update(delta);
+                collidedWithProjectile(spider.getSpiderX(), spider.getSpiderY());
                 if(spider.dead){
                     spidersBigToRemove.add(spider);
                 }
@@ -117,7 +121,7 @@ public class EntityManager {
         if (projectiles.size() > 0){
             for(Projectile projectile : projectiles){
                 projectile.update(delta);
-                if (projectile.remove){
+                if(projectile.remove){
                     projectilesToRemove.add(projectile);
                 }
             }
@@ -133,7 +137,53 @@ public class EntityManager {
         }
     }
 
-    private void updateProjectilePos(){
-        
+    private void updateProjectileStatus(Projectile projectile){
+        float oldX = projectile.getOldX();
+        float oldY = projectile.getOldY();
+        if(!projectile.addedToPosLog){
+            projectileX.add(oldX);
+            projectileY.add(oldY);
+            projectile.addedToPosLog = true;
+        }
+        if (projectile.remove){
+            projectilesToRemove.add(projectile);
+            projectileX.remove(projectileX.indexOf(oldX));
+            projectileY.remove(projectileY.indexOf(oldY));
+        }
+        else{
+            projectileX.set(projectileX.indexOf(oldX), projectile.getX());
+            projectileY.set(projectileY.indexOf(oldY), projectile.getY());
+        }
+    }
+
+    private boolean collidedWithProjectile(float enemyX, float enemyY){
+        boolean collided = false;
+        //left side of enemy
+        for(Projectile projectile : projectiles){
+            float angle =(float) -Math.toDegrees(projectile.angle);
+            //check if enemy is within the size of the projectile
+            
+            if(projectile.getX() < enemyX && enemyX > projectile.getX() + AssetRenderer.arrowTexture.getWidth()/2 && projectile.getY() < enemyY && enemyY > projectile.getY() + AssetRenderer.arrowTexture.getHeight()/2){
+                projectilesToRemove.add(projectile);
+                collided = true;
+                break;
+            }
+            /*
+            //30deg
+            if(angle>0&&angle<=30){
+
+            }
+
+            //60deg
+            if(angle>30&&angle<=60){
+
+            }
+            //90deg
+            if(angle>60&&angle<=90){
+
+            }
+            */
+        }
+        return collided;
     }
 }

@@ -168,12 +168,6 @@ public class SpiderEnemy{
     public float getSpiderY(){
         return yPos;
     }
-    public float getSpiderOldX(){
-        return oldX;
-    }
-    public float getSpiderOldY(){
-        return oldY;
-    }
 
     private void pathfinding(){
         playerX = player.getPlayerX();

@@ -12,16 +12,17 @@ public class Projectile {
     private Vector2 velocity;
     private static Animation<TextureRegion> arrowAnimation;
 
-    private float x, y, oldX, oldY, width, height, angle;
+    private float x, y, oldX, oldY, width, height;
+    public float angle;
     private static float elapsedTime = 0;
     private float worldWidth = 1600;
     private float worldHeight = 900;
     private TiledMapTileLayer collisionLayer;
 
     public boolean remove = false;
+    public boolean addedToPosLog = false;
 
     public Projectile(float speed, float x, float y, float mouseX, float mouseY, TiledMapTileLayer collisionLayer){
-        System.out.println("clicked");
         arrowAnimation = AssetRenderer.arrowAnimation;
         this.x = x;
         this.y = y;
@@ -39,6 +40,7 @@ public class Projectile {
         velocity = new Vector2(velX, -velY);
         velocity.nor();
         velocity.scl(speed);
+        System.out.println(-Math.toDegrees(angle));
     }
 
     public void update(float getDeltaTime){

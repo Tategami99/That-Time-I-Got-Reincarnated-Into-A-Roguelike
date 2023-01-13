@@ -40,7 +40,7 @@ public class Overworld extends ScreenAdapter{
         //update stuff
         camera.update();
         AssetRenderer.overworldRenderer.getBatch().setProjectionMatrix(camera.combined);
-        entities.update(delta);
+        entities.update(player, delta);
 
         AssetRenderer.overworldRenderer.getBatch().begin();
             player.draw(AssetRenderer.overworldRenderer.getBatch(), delta);
