@@ -40,7 +40,6 @@ public class Overworld extends ScreenAdapter{
         //update stuff
         camera.update();
         AssetRenderer.overworldRenderer.getBatch().setProjectionMatrix(camera.combined);
-        player.updateNonRender();
         entities.update(delta);
 
         AssetRenderer.overworldRenderer.getBatch().begin();
@@ -60,9 +59,8 @@ public class Overworld extends ScreenAdapter{
 
         stage = new Stage(viewport, AssetRenderer.overworldRenderer.getBatch());
 
-        player = new Player((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1), game, stage, 20 * ((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1)).getTileWidth(), 20 * ((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1)).getTileHeight());
-
         entities = new EntityManager((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1));
+        player = new Player((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1), game, stage, entities,  20 * ((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1)).getTileWidth(), 20 * ((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1)).getTileHeight());
         entities.createEntities(player, 1, 0);
 
         Gdx.input.setInputProcessor(player);

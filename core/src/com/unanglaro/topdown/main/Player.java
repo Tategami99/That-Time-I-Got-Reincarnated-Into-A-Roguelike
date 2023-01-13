@@ -32,17 +32,16 @@ public class Player implements InputProcessor{
 
     //variables relative to player
     private PauseMenu pauseMenu;
-    private ArrayList<Projectile> projectiles;
-    private ArrayList<Projectile> projectilesToRemove;
     private float shootingSpeed = 300;
 
     //variables received from game world
     private Stage stage;
     private TiledMapTileLayer collisionLayer;
+    private EntityManager entities;
     private float worldWidth = 1600;
     private float worldHeight = 960;
 
-    Player(TiledMapTileLayer collisionLayer, rpgGame game, Stage stage, float xPos, float yPos){
+    Player(TiledMapTileLayer collisionLayer, rpgGame game, Stage stage, EntityManager entities, float xPos, float yPos){
         if(playerAnimation == null){
             AssetRenderer.playerLoad(4, 1, 0.075f);
             AssetRenderer.arrowProjectileLoad();
@@ -53,31 +52,17 @@ public class Player implements InputProcessor{
         }
         this.collisionLayer = collisionLayer;
         this.stage = stage;
+        this.entities = entities;
         this.xPos = xPos;
         this.yPos = yPos;
 
         pauseMenu = new PauseMenu(this, game);
-        projectiles = new ArrayList<Projectile>();
-        projectilesToRemove = new ArrayList<Projectile>();
         
         //scale(scaleAmount);
         width = width*scaleAmount;
         height = height*scaleAmount;
         colliderX = width;
         colliderY = height*0.25f;
-    }
-
-    public void updateNonRender(){
-        //update arrows
-        if (projectiles.size() > 0){
-            for(Projectile projectile : projectiles){
-                projectile.update(Gdx.graphics.getDeltaTime());
-                if (projectile.remove){
-                    projectilesToRemove.add(projectile);
-                }
-            }
-            projectiles.removeAll(projectilesToRemove);
-        }
     }
     
     public void draw(Batch spriteBatch, float deltaTime){
@@ -86,13 +71,6 @@ public class Player implements InputProcessor{
         elapsedTime += deltaTime;
         spriteBatch.draw(AssetRenderer.playerMoveAnimation.getKeyFrame(elapsedTime, true), xPos, yPos);
         spriteBatch.draw(AssetRenderer.playerBowTextureRegion, xPos - width/2, yPos + height/2, AssetRenderer.playerBowTextureRegion.getRegionWidth()/2, 0, AssetRenderer.playerBowTextureRegion.getRegionWidth(), AssetRenderer.playerBowTextureRegion.getRegionHeight(), 1, 1,(float) (90 - Math.toDegrees(angle)));
-
-        //render arrows
-        if (projectiles.size() > 0){
-            for (Projectile projectile : projectiles){
-                projectile.render(spriteBatch);
-            }
-        }
     }
 
     public void update(float delta){
@@ -270,7 +248,7 @@ public class Player implements InputProcessor{
         switch(button){
             case Buttons.LEFT:
                 //System.out.println("mouseX is: " + screenX + " mouseY is: " + screenY + " x is: " + xPos + " y is: " + yPos);
-                projectiles.add(new Projectile(shootingSpeed, xPos + (width/2), yPos - (height/2), screenX, screenY, collisionLayer));
+                entities.projectiles.add(new Projectile(shootingSpeed, xPos + (width/2), yPos - (height/2), screenX, screenY, collisionLayer));
         }
         return false;
     }

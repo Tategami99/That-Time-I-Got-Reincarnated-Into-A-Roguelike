@@ -157,4 +157,17 @@ public class Projectile {
             remove = true;
         }
     }
+
+    public float getOldX(){
+        return oldX;
+    }
+    public float getOldY(){
+        return oldY;
+    }
+    public float getX(){
+        return x;
+    }
+    public float getY(){
+        return y;
+    }
 }

@@ -24,6 +24,12 @@ public class EntityManager {
     private ArrayList<Float> bigSpiderX = new ArrayList<Float>();
     private ArrayList<Float> bigSpiderY = new ArrayList<Float>();
 
+    //projectiles
+    public ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+    private ArrayList<Projectile> projectilesToRemove = new ArrayList<Projectile>();
+    private ArrayList<Float> projectileX = new ArrayList<Float>();
+    private ArrayList<Float> projectileY = new ArrayList<Float>();
+
 
     public EntityManager(TiledMapTileLayer collisionLayer){
         this.collisionLayer = collisionLayer;
@@ -32,11 +38,13 @@ public class EntityManager {
     }
 
     public void render(Batch batch, float deltaTime){
+        renderProjectiles(batch);
         renderNormal(batch, deltaTime);
         renderBig(batch, deltaTime);
     }
 
     public void update(float delta){
+        updateProjectiles(delta);
         updateNormal(delta);
         updateBig(delta);
     }
@@ -103,5 +111,29 @@ public class EntityManager {
             }
             spidersBig.removeAll(spidersBigToRemove);
         }
+    }
+
+    private void updateProjectiles(float delta){
+        if (projectiles.size() > 0){
+            for(Projectile projectile : projectiles){
+                projectile.update(delta);
+                if (projectile.remove){
+                    projectilesToRemove.add(projectile);
+                }
+            }
+            projectiles.removeAll(projectilesToRemove);
+        }
+    }
+
+    private void renderProjectiles(Batch batch){
+        if (projectiles.size() > 0){
+            for (Projectile projectile : projectiles){
+                projectile.render(batch);
+            }
+        }
+    }
+
+    private void updateProjectilePos(){
+        
     }
 }
