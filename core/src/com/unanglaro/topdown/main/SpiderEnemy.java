@@ -16,6 +16,7 @@ public class SpiderEnemy{
     public boolean dead = false;
     private float scaleAmount = 2;
     private float width, height;
+    private float oldX, oldY;
     private float xPos, yPos;
     private Player player;
     private static float playerX, playerY;
@@ -43,11 +44,11 @@ public class SpiderEnemy{
             //scale(scaleAmount);
             width *= scaleAmount;
             height *= scaleAmount;
-            speed = DataStorage.playerSpeed*0.95f;
+            speed = DataStorage.playerSpeed*1f;
         }
         else{
             health = 1;
-            speed = DataStorage.playerSpeed*1.05f;
+            speed = DataStorage.playerSpeed*1.1f;
         }
     }
 
@@ -58,34 +59,14 @@ public class SpiderEnemy{
 
     public void update(float delta){
         pathfinding();
-
-        //limit speed
-        /*
-        if (velocity.y > speed){
-            velocity.y = speed;
-        }
-        else if (velocity.y == 0){
-            velocity.y = 0;
-        }
-        else if (velocity.y < speed){
-            velocity.y = -speed;
-        }
-        if(velocity.x > speed){
-            velocity.x = speed;
-        }
-        else if (velocity.x == 0){
-            velocity.x = 0;
-        }
-        else if (velocity.x < speed){
-            velocity.x = -speed;
-        }
-        */
         checkCollisions(delta);
     }
 
     private void checkCollisions(float delta){
         //save old position
-        float oldX = xPos, oldY = yPos, tileWdith = collisionLayer.getTileWidth(), tileHeight = collisionLayer.getTileHeight();
+        oldX = xPos;
+        oldY = yPos;
+        float tileWdith = collisionLayer.getTileWidth(), tileHeight = collisionLayer.getTileHeight();
         boolean collisionX = false, collisionY = false;
 
         //move x
@@ -181,21 +162,26 @@ public class SpiderEnemy{
         }
     }
 
+    public float getSpiderX(){
+        return xPos;
+    }
+    public float getSpiderY(){
+        return yPos;
+    }
+    public float getSpiderOldX(){
+        return oldX;
+    }
+    public float getSpiderOldY(){
+        return oldY;
+    }
+
     private void pathfinding(){
         playerX = player.getPlayerX();
         playerY = player.getPlayerY();
 
-        float diffX = playerX*(worldWidth/Gdx.graphics.getWidth()) - xPos;
-        float diffY = playerY*(worldHeight/Gdx.graphics.getHeight()) - (worldHeight - yPos);
-        float angle = (float) Math.atan2(diffY, diffX);
-        float velX = (float) Math.cos(angle);
-        float velY = (float) Math.sin(angle);
-        //velocity.x = velX;
-        //velocity.y = -velY;
-        velocity.x = velX;
-        velocity.y = -velY;
+        velocity.x = playerX - xPos;
+        velocity.y = playerY - yPos;
         velocity.nor();
         velocity.scl(speed);
-        //System.out.println("velX: " + velocity.x + "  velY: " + velocity.y);
     }
 }

@@ -270,7 +270,7 @@ public class Player implements InputProcessor{
         switch(button){
             case Buttons.LEFT:
                 //System.out.println("mouseX is: " + screenX + " mouseY is: " + screenY + " x is: " + xPos + " y is: " + yPos);
-                projectiles.add(new Projectile(shootingSpeed, xPos + (width/2), yPos - (height/2), screenX, screenY, worldWidth, worldHeight));
+                projectiles.add(new Projectile(shootingSpeed, xPos + (width/2), yPos - (height/2), screenX, screenY, collisionLayer));
         }
         return false;
     }

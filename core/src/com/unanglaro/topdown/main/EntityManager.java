@@ -14,10 +14,16 @@ public class EntityManager {
 
     private TiledMapTileLayer collisionLayer;
 
+    //spiders
     private ArrayList<SpiderEnemy> spidersNormal = new ArrayList<SpiderEnemy>();
     private ArrayList<SpiderEnemy> spidersNormalToRemove = new ArrayList<SpiderEnemy>();
+    private ArrayList<Float> normalSpiderX = new ArrayList<Float>();
+    private ArrayList<Float> normalSpiderY = new ArrayList<Float>();
     private ArrayList<SpiderEnemy> spidersBig = new ArrayList<SpiderEnemy>();
     private ArrayList<SpiderEnemy> spidersBigToRemove = new ArrayList<SpiderEnemy>();
+    private ArrayList<Float> bigSpiderX = new ArrayList<Float>();
+    private ArrayList<Float> bigSpiderY = new ArrayList<Float>();
+
 
     public EntityManager(TiledMapTileLayer collisionLayer){
         this.collisionLayer = collisionLayer;
@@ -45,7 +51,7 @@ public class EntityManager {
         for (int index = 0; index < bigSpiders; index++) {
             float spawnX = (float) Math.floor(Math.random()*(spawnAreaMaxX-spawnAreaMinX+ 1) + spawnAreaMinX);
             float spawnY = (float) Math.floor(Math.random()*(spawnAreaMaxY-spawnAreaMinY+ 1) + spawnAreaMinY);
-            spidersBig.add(new SpiderEnemy(player, collisionLayer, false, spawnX, spawnY));
+            spidersBig.add(new SpiderEnemy(player, collisionLayer, true, spawnX, spawnY));
             System.out.println("x: " + spawnX + "  y: " + spawnY);
         }
     }
@@ -73,6 +79,11 @@ public class EntityManager {
         if(spidersNormal.size() > 0){
             for(SpiderEnemy spider : spidersNormal){
                 spider.update(delta);
+                float oldX = spider.getSpiderOldX();
+                //System.out.println("oldX: " + oldX);
+                normalSpiderX.add(oldX);
+                normalSpiderX.set(normalSpiderX.indexOf(oldX), spider.getSpiderX());
+                //System.out.println("newX: " + spider.getSpiderX());
                 if(spider.dead){
                     spidersNormalToRemove.add(spider);
                 }
