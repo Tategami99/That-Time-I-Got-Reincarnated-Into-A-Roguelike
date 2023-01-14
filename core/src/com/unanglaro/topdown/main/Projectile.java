@@ -1,36 +1,39 @@
 package com.unanglaro.topdown.main;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import java.lang.Math;
 
-public class Projectile {
+public class Projectile{
     private Vector2 velocity;
-    private static Animation<TextureRegion> arrowAnimation;
+    private static TextureRegion bulletTexture;
 
     private float x, y, oldX, oldY, width, height;
     public float angle;
-    private static float elapsedTime = 0;
     private float worldWidth = 1600;
     private float worldHeight = 900;
     private TiledMapTileLayer collisionLayer;
+
+    //collisions
+    private Polygon collider;
+    private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     public boolean remove = false;
     public boolean addedToPosLog = false;
 
     public Projectile(float speed, float x, float y, float mouseX, float mouseY, TiledMapTileLayer collisionLayer){
-        arrowAnimation = AssetRenderer.arrowAnimation;
         this.x = x;
         this.y = y;
         this.collisionLayer = collisionLayer;
 
-        arrowAnimation = AssetRenderer.arrowAnimation;
-        width = AssetRenderer.arrowTexture.getWidth()/2;
-        height = AssetRenderer.arrowTexture.getHeight()/2;
+        bulletTexture = AssetRenderer.bulletTextureRegion;
+        width = AssetRenderer.bulletTexture.getWidth()/2;
+        height = AssetRenderer.bulletTexture.getHeight()/2;
         
         float diffX = mouseX*(worldWidth/Gdx.graphics.getWidth()) - x;
         float diffY = mouseY*(worldHeight/Gdx.graphics.getHeight()) - (worldHeight - y);
@@ -40,26 +43,27 @@ public class Projectile {
         velocity = new Vector2(velX, -velY);
         velocity.nor();
         velocity.scl(speed);
-        System.out.println(-Math.toDegrees(angle));
+        float monitorX = x*(Gdx.graphics.getWidth()/worldWidth);
+        float monitorY = y*(Gdx.graphics.getHeight()/worldHeight);
+        collider = new Polygon(new float[]{monitorX, monitorY, monitorX + width, monitorY, monitorX + width, monitorY + height, monitorX, monitorY + height});
+        collider.setOrigin((monitorX + width)/2, (monitorY + height)/2);
+        //collider.setRotation((float) (90 - Math.toDegrees(angle)));
+        //System.out.println(Math.toDegrees(angle));
     }
 
     public void update(float getDeltaTime){
         x += velocity.x*getDeltaTime;
-
         y += velocity.y*getDeltaTime;
 
-        //detect collision within world coords
-        /*
-        if(x < 0 || x > worldWidth || y < 0 || y > worldHeight){// collision within world bounds
-            remove = true;
-        }
-        */
         checkCollisions(getDeltaTime);
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.polygon(collider.getTransformedVertices());
+        shapeRenderer.end();
     }
 
     public void render(Batch batch){
-        elapsedTime += Gdx.graphics.getDeltaTime();
-        batch.draw(arrowAnimation.getKeyFrame(elapsedTime, true), x, y, 0, height, width, height, 1, 1, (float) (90 - Math.toDegrees(angle)));
+        batch.draw(bulletTexture, x, y, 0, height, width, height, 1, 1, (float) (90 - Math.toDegrees(angle)));
     }
 
     private void checkCollisions(float delta){
@@ -111,6 +115,7 @@ public class Projectile {
         }
         //react to x collision
         if(collisionX){
+            //System.out.println("x: " + x + "  y: " + y);
             remove = true;
         }
 
@@ -156,8 +161,11 @@ public class Projectile {
         }
         //react to y collision
         if(collisionY){
+            //System.out.println("x: " + x + "  y: " + y);
             remove = true;
         }
+
+        updateCollider();
     }
 
     public float getOldX(){
@@ -171,5 +179,28 @@ public class Projectile {
     }
     public float getY(){
         return y;
+    }
+    /*
+    public float[] getPoints(){
+        float bottomLeft, bottomRight, topLeft, topRight, center;
+        float[] points = {bottomLeft, bottomRight, topLeft, topRight, center};
+        return points;
+    }
+    */
+    private void updateCollider(){
+        float conversionFactor = (Gdx.graphics.getWidth()/worldWidth);
+        float bottomLeftX = 0f;
+        float bottomLeftY = 0f;
+        float bottomRightX = 0f;
+        float bottomRightY = 0f;
+        float topRightX = 0f;
+        float topRightY = 0f;
+        float topLeftX = 0f;
+        float topLeftY = 0f;
+
+        
+        collider.setVertices(new float[]{bottomLeftX, bottomLeftY, bottomRightX, bottomRightY, topRightX, topRightY, topLeftX, topLeftY});
+        collider.setOrigin(0, height);
+        System.out.println("x: " + x + " cx: " + collider.getX());
     }
 }

@@ -163,7 +163,7 @@ public class EntityManager {
             float angle =(float) -Math.toDegrees(projectile.angle);
             //check if enemy is within the size of the projectile
             
-            if(projectile.getX() < enemyX && enemyX > projectile.getX() + AssetRenderer.arrowTexture.getWidth()/2 && projectile.getY() < enemyY && enemyY > projectile.getY() + AssetRenderer.arrowTexture.getHeight()/2){
+            if(projectile.getX() < enemyX && enemyX > projectile.getX() + AssetRenderer.bulletTexture.getWidth() && projectile.getY() < enemyY && enemyY > projectile.getY() + AssetRenderer.bulletTexture.getHeight()){
                 projectilesToRemove.add(projectile);
                 collided = true;
                 break;

@@ -55,10 +55,9 @@ public class AssetRenderer {
     public static OrthogonalTiledMapRenderer overworldRenderer;
     public static MapProperties overworldMapProperties;
 
-    //arrow projectile stuff
-    public static Texture arrowTexture;
-    public static Animation<TextureRegion> arrowAnimation;
-
+    //bullet projectile stuff
+    public static Texture bulletTexture;
+    public static TextureRegion bulletTextureRegion;
     //spider enemy stuff
     public static Texture spiderTexture;
     public static Animation<TextureRegion> spiderAnimation;
@@ -148,7 +147,7 @@ public class AssetRenderer {
     }
 
     public static void playerItemsLoad(){
-        playerBowTexture = new Texture("Projectiles/bow.png");
+        playerBowTexture = new Texture("Projectiles/pistol.png");
         playerBowTextureRegion = new TextureRegion(playerBowTexture);
     }
     public static void playerItemsDispose(){
@@ -164,12 +163,12 @@ public class AssetRenderer {
         overworldMap.dispose();
         overworldRenderer.dispose();
     }
-    public static void arrowProjectileLoad(){
-        arrowTexture = new Texture("Projectiles/arrow.png");
-        arrowAnimation = createAnimation(arrowTexture, 2, 2, 0.075f);
+    public static void bulletProjectileLoad(){
+        bulletTexture = new Texture("Projectiles/bullet.png");
+        bulletTextureRegion = new TextureRegion(bulletTexture);
     }
-    public static void arrowProjectileDispose(){
-        arrowTexture.dispose();
+    public static void bulletProjectileDispose(){
+        bulletTexture.dispose();
     }
     public static void spiderEnemyLoad(){
         spiderTexture = new Texture("Spritesheets/spidermove.png");

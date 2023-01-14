@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
@@ -28,6 +30,8 @@ public class SpiderEnemy{
     private float worldWidth = 1600;
     private float worldHeight = 900;
     private boolean runPathfinding = true;
+    private Polygon collider;
+    private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     public SpiderEnemy(Player player, TiledMapTileLayer collisionLayer, boolean big, float xPos, float yPos){
         this.player = player;
@@ -50,6 +54,11 @@ public class SpiderEnemy{
             health = 1;
             speed = DataStorage.playerSpeed*1.1f;
         }
+
+        float monitorX = xPos*(Gdx.graphics.getWidth()/worldWidth);
+        float monitorY = yPos*(Gdx.graphics.getHeight()/worldHeight);
+        collider = new Polygon(new float[]{monitorX, monitorY, monitorX + width, monitorY, monitorX + width, monitorY + height, monitorX, monitorY + height});
+        collider.setOrigin((monitorX + width)/2, (monitorY + height)/2);
     }
 
     public void render(Batch spriteBatch, float deltaTime){
@@ -60,6 +69,10 @@ public class SpiderEnemy{
     public void update(float delta){
         pathfinding();
         checkCollisions(delta);
+        
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.polygon(collider.getTransformedVertices());
+        shapeRenderer.end();
     }
 
     private void checkCollisions(float delta){
@@ -160,6 +173,11 @@ public class SpiderEnemy{
             yPos = oldY;
             velocity.y = 0;
         }
+
+        float monitorX = xPos*(Gdx.graphics.getWidth()/worldWidth);
+        float monitorY = yPos*(Gdx.graphics.getHeight()/worldHeight);
+        collider.setVertices(new float[]{monitorX, monitorY, monitorX + width, monitorY, monitorX + width, monitorY + height, monitorX, monitorY + height});
+        collider.setOrigin((monitorX + width)/2, (monitorY + height)/2);
     }
 
     public float getSpiderX(){

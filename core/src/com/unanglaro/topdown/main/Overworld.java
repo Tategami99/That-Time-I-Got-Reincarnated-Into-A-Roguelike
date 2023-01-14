@@ -41,6 +41,7 @@ public class Overworld extends ScreenAdapter{
         camera.update();
         AssetRenderer.overworldRenderer.getBatch().setProjectionMatrix(camera.combined);
         entities.update(player, delta);
+        player.updateNonRender();
 
         AssetRenderer.overworldRenderer.getBatch().begin();
             player.draw(AssetRenderer.overworldRenderer.getBatch(), delta);
@@ -76,7 +77,7 @@ public class Overworld extends ScreenAdapter{
         AssetRenderer.playerDispose();
         AssetRenderer.playerItemsDispose();
         AssetRenderer.spiderEnemyDispose();
-        AssetRenderer.arrowProjectileDispose();
+        AssetRenderer.bulletProjectileDispose();
 	}
 
     //my methods

@@ -10,21 +10,24 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class Player implements InputProcessor{
     //player variables
     private float width, height;
-    private float colliderX, colliderY;
     private Vector2 velocity = new Vector2();
     private float speed = DataStorage.playerSpeed;
     private float scaleAmount = 0.75f;
     private float diffX, diffY, angle;
     private Animation<TextureRegion> playerAnimation;
     private float xPos, yPos;
+    private Polygon collider;
+    private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     //game state variables
     public boolean isPaused = false;
@@ -44,7 +47,7 @@ public class Player implements InputProcessor{
     Player(TiledMapTileLayer collisionLayer, rpgGame game, Stage stage, EntityManager entities, float xPos, float yPos){
         if(playerAnimation == null){
             AssetRenderer.playerLoad(4, 1, 0.075f);
-            AssetRenderer.arrowProjectileLoad();
+            AssetRenderer.bulletProjectileLoad();
             AssetRenderer.playerItemsLoad();
             playerAnimation = AssetRenderer.playerMoveAnimation;
             width = AssetRenderer.playerMoveTexture.getWidth()/4;
@@ -57,12 +60,16 @@ public class Player implements InputProcessor{
         this.yPos = yPos;
 
         pauseMenu = new PauseMenu(this, game);
+        collider = new Polygon();
         
         //scale(scaleAmount);
         width = width*scaleAmount;
         height = height*scaleAmount;
-        colliderX = width;
-        colliderY = height*0.25f;
+
+        float monitorX = xPos*(Gdx.graphics.getWidth()/worldWidth);
+        float monitorY = yPos*(Gdx.graphics.getHeight()/worldHeight);
+        collider = new Polygon(new float[]{monitorX, monitorY, monitorX + width, monitorY, monitorX + width, monitorY + height, monitorX, monitorY + height});
+        collider.setOrigin((monitorX + width)/2, (monitorY + height)/2);
     }
     
     public void draw(Batch spriteBatch, float deltaTime){
@@ -93,8 +100,14 @@ public class Player implements InputProcessor{
         else if (velocity.x < speed){
             velocity.x = -speed;
         }
-        
         checkCollisions(delta);
+    }
+
+    //debugging only
+    public void updateNonRender(){
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.polygon(collider.getTransformedVertices());
+        shapeRenderer.end();
     }
 
     private void checkCollisions(float delta){
@@ -193,6 +206,10 @@ public class Player implements InputProcessor{
             yPos = oldY;
             velocity.y = 0;
         }
+        float monitorX = xPos*(Gdx.graphics.getWidth()/worldWidth);
+        float monitorY = yPos*(Gdx.graphics.getHeight()/worldHeight);
+        collider.setVertices(new float[]{monitorX, monitorY, monitorX + width, monitorY, monitorX + width, monitorY + height, monitorX, monitorY + height});
+        collider.setOrigin((monitorX + width)/2, (monitorY + height)/2);
     }
 
     public float getPlayerX(){
