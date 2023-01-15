@@ -2,8 +2,13 @@ package com.unanglaro.topdown.main;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.FloatArray;
+
 import java.lang.Math;
 
 public class EntityManager {
@@ -12,28 +17,29 @@ public class EntityManager {
     private float spawnAreaMinY = 100;
     private float spawnAreaMaxY = 800;
 
+    //game variables
     private TiledMapTileLayer collisionLayer;
+    private float worldWidth;
+    private float worldHeight;
 
     //spiders
     private ArrayList<SpiderEnemy> spidersNormal = new ArrayList<SpiderEnemy>();
     private ArrayList<SpiderEnemy> spidersNormalToRemove = new ArrayList<SpiderEnemy>();
-    private ArrayList<Float> normalSpiderX = new ArrayList<Float>();
-    private ArrayList<Float> normalSpiderY = new ArrayList<Float>();
     private ArrayList<SpiderEnemy> spidersBig = new ArrayList<SpiderEnemy>();
     private ArrayList<SpiderEnemy> spidersBigToRemove = new ArrayList<SpiderEnemy>();
-    private ArrayList<Float> bigSpiderX = new ArrayList<Float>();
-    private ArrayList<Float> bigSpiderY = new ArrayList<Float>();
 
     //projectiles
     public ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
     private ArrayList<Projectile> projectilesToRemove = new ArrayList<Projectile>();
-    private ArrayList<Float> projectileX = new ArrayList<Float>();
-    private ArrayList<Float> projectileY = new ArrayList<Float>();
 
 
-    public EntityManager(TiledMapTileLayer collisionLayer){
+    public EntityManager(TiledMapTileLayer collisionLayer, float worldWidth, float worldHeight){
         this.collisionLayer = collisionLayer;
+        this.worldWidth = worldWidth;
+        this.worldHeight = worldHeight;
 
+        AssetRenderer.bulletProjectileLoad();
+        projectiles.add(new Projectile(1000, 100, 900, 100*(Gdx.graphics.getWidth()/worldWidth), (worldHeight - 950)*(Gdx.graphics.getHeight()/worldHeight), collisionLayer, worldWidth, worldHeight));
         AssetRenderer.spiderEnemyLoad();
     }
 
@@ -43,7 +49,7 @@ public class EntityManager {
         renderBig(batch, deltaTime);
     }
 
-    public void update(Player player, float delta){
+    public void update(float delta){
         updateProjectiles(delta);
         updateNormal(delta);
         updateBig(delta);
@@ -88,9 +94,6 @@ public class EntityManager {
             for(SpiderEnemy spider : spidersNormal){
                 spider.update(delta);
                 if(projectiles.size() > 0){
-                    if(collidedWithProjectile(spider.getSpiderX(), spider.getSpiderY())){
-                        spider.health -= 1;
-                    }
                     if(spider.health == 0){
                         spider.dead = true;
                     }
@@ -108,7 +111,11 @@ public class EntityManager {
         if(spidersBig.size() > 0){
             for(SpiderEnemy spider : spidersBig){
                 spider.update(delta);
-                collidedWithProjectile(spider.getSpiderX(), spider.getSpiderY());
+                if(projectiles.size() > 0){
+                    if(spider.health == 0){
+                        spider.dead = true;
+                    }
+                }
                 if(spider.dead){
                     spidersBigToRemove.add(spider);
                 }
@@ -121,6 +128,9 @@ public class EntityManager {
         if (projectiles.size() > 0){
             for(Projectile projectile : projectiles){
                 projectile.update(delta);
+                if(collidedWithEnemy(projectile)){
+                    projectile.remove = true;
+                }
                 if(projectile.remove){
                     projectilesToRemove.add(projectile);
                 }
@@ -137,53 +147,26 @@ public class EntityManager {
         }
     }
 
-    private void updateProjectileStatus(Projectile projectile){
-        float oldX = projectile.getOldX();
-        float oldY = projectile.getOldY();
-        if(!projectile.addedToPosLog){
-            projectileX.add(oldX);
-            projectileY.add(oldY);
-            projectile.addedToPosLog = true;
-        }
-        if (projectile.remove){
-            projectilesToRemove.add(projectile);
-            projectileX.remove(projectileX.indexOf(oldX));
-            projectileY.remove(projectileY.indexOf(oldY));
-        }
-        else{
-            projectileX.set(projectileX.indexOf(oldX), projectile.getX());
-            projectileY.set(projectileY.indexOf(oldY), projectile.getY());
-        }
-    }
-
-    private boolean collidedWithProjectile(float enemyX, float enemyY){
+    private boolean collidedWithEnemy(Projectile projectile){
         boolean collided = false;
-        //left side of enemy
-        for(Projectile projectile : projectiles){
-            float angle =(float) -Math.toDegrees(projectile.angle);
-            //check if enemy is within the size of the projectile
-            
-            if(projectile.getX() < enemyX && enemyX > projectile.getX() + AssetRenderer.bulletTexture.getWidth() && projectile.getY() < enemyY && enemyY > projectile.getY() + AssetRenderer.bulletTexture.getHeight()){
-                projectilesToRemove.add(projectile);
-                collided = true;
-                break;
+        for(Entity enemy : spidersNormal){
+            float x = enemy.getX();
+            float y = enemy.getY();
+            float width = enemy.getWidth();
+            float height = enemy.getHeight();
+            float px = projectile.getX();
+            float pw = projectile.getWidth();
+            float py = projectile.getY();
+            float ph = projectile.getHeight();
+            collided = x < px + pw && x + width > px && y < py + ph && y + height > py;
+            if(collided){
+                enemy.health -= 1;
             }
-            /*
-            //30deg
-            if(angle>0&&angle<=30){
-
-            }
-
-            //60deg
-            if(angle>30&&angle<=60){
-
-            }
-            //90deg
-            if(angle>60&&angle<=90){
-
-            }
-            */
         }
+        return collided;
+    }
+    private boolean collidedWithPlayer(Player player, SpiderEnemy enemy){
+        boolean collided = true;
         return collided;
     }
 }

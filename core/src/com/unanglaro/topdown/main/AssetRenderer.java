@@ -149,6 +149,7 @@ public class AssetRenderer {
     public static void playerItemsLoad(){
         playerBowTexture = new Texture("Projectiles/pistol.png");
         playerBowTextureRegion = new TextureRegion(playerBowTexture);
+        playerBowTextureRegion.flip(false, false);
     }
     public static void playerItemsDispose(){
         playerBowTexture.dispose();
