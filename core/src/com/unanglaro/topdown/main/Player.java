@@ -15,7 +15,6 @@ public class Player extends Entity implements InputProcessor{
     //player variables
     private float width, height;
     private Vector2 velocity = new Vector2();
-    private float speed = DataStorage.playerSpeed;
     private float scaleAmount = 0.75f;
     private float diffX, diffY, angle;
     private Animation<TextureRegion> playerAnimation;
@@ -52,6 +51,12 @@ public class Player extends Entity implements InputProcessor{
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
 
+        isPlayer = true;
+        health = DataStorage.playerHealth;
+        attack = DataStorage.playerAttack;
+        speed = DataStorage.playerSpeed;
+        defense = DataStorage.playerDefense;
+
         pauseMenu = new PauseMenu(this, game);
         
         //scale(scaleAmount);
@@ -61,12 +66,11 @@ public class Player extends Entity implements InputProcessor{
         setHeight(height);
     }
     
-    public void draw(Batch spriteBatch, float deltaTime){
-        update(deltaTime);
+    public void render(Batch spriteBatch, float deltaTime){
         //System.out.println("x: " + getX() + " y: " + getY());
         elapsedTime += deltaTime;
         spriteBatch.draw(AssetRenderer.playerMoveAnimation.getKeyFrame(elapsedTime, true), getX(), getY());
-        spriteBatch.draw(AssetRenderer.playerBowTextureRegion, getX() + width/2, getY() + height/2, AssetRenderer.playerBowTextureRegion.getRegionWidth(), 0, AssetRenderer.playerBowTextureRegion.getRegionWidth(), AssetRenderer.playerBowTextureRegion.getRegionHeight(), 0.5f, 0.5f,(float) (90 - Math.toDegrees(angle)));
+        spriteBatch.draw(AssetRenderer.playerBowTextureRegion, getX()-getWidth()/2, getY() + 3*height/4, AssetRenderer.playerBowTextureRegion.getRegionWidth(), 0, AssetRenderer.playerBowTextureRegion.getRegionWidth(), AssetRenderer.playerBowTextureRegion.getRegionHeight(), 0.5f, 0.5f,(float) (90 - Math.toDegrees(angle)));
     }
 
     public void update(float delta){
@@ -90,10 +94,6 @@ public class Player extends Entity implements InputProcessor{
             velocity.x = -speed;
         }
         checkCollisions(delta);
-    }
-
-    //debugging only
-    public void updateNonRender(){
     }
 
     private void checkCollisions(float delta){
@@ -256,7 +256,7 @@ public class Player extends Entity implements InputProcessor{
         switch(button){
             case Buttons.LEFT:
                 //System.out.println("mouseX is: " + screenX + " mouseY is: " + screenY + " x is: " + getX() + " y is: " + getY());
-                entities.projectiles.add(new Projectile(shootingSpeed, getX() + (width/2), getY() + (height/2), screenX, screenY, collisionLayer, worldWidth, worldHeight));
+                entities.projectiles.add(new Projectile(attack, shootingSpeed, getX() + (width/2), getY() + (height/2), screenX, screenY, collisionLayer, worldWidth, worldHeight));
         }
         return false;
     }
@@ -274,7 +274,6 @@ public class Player extends Entity implements InputProcessor{
         diffX = screenX*(worldWidth/Gdx.graphics.getWidth()) - getX();
         diffY = screenY*(worldHeight/Gdx.graphics.getHeight()) - (worldHeight - getY());
         angle = (float) Math.atan2(diffY, diffX);
-        System.out.println("x: " + screenX + " y: " + screenY);
         return false;
     }
     @Override
@@ -284,13 +283,15 @@ public class Player extends Entity implements InputProcessor{
     
     //
     public void toggleEscape(){
-        isPaused = !isPaused;
-        if(!isPaused){
-            Gdx.input.setInputProcessor(stage);
-            stage.addActor(pauseMenu);
-        }else{
-            Gdx.input.setInputProcessor(this);
-            pauseMenu.remove();
+        if(GameState.pausable){
+            isPaused = !isPaused;
+            if(!isPaused){
+                Gdx.input.setInputProcessor(stage);
+                stage.addActor(pauseMenu);
+            }else{
+                Gdx.input.setInputProcessor(this);
+                pauseMenu.remove();
+            }
         }
     }
 }

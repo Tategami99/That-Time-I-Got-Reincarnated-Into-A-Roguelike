@@ -1,7 +1,8 @@
 package com.unanglaro.topdown.main;
 
 public class Entity {
-    public float health;
+    public boolean isPlayer = false;
+    public int health, attack, speed, defense;
     private float xPos, yPos, width, height;
     public float getX(){
         return xPos;

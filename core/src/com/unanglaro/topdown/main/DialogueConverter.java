@@ -10,7 +10,7 @@ import java.util.List;
 public class DialogueConverter {
     public BufferedReader br;
     public List<String> dialogue = new ArrayList<>();
-    public Integer elementsPerRow = 9;
+    public Integer elementsPerRow = 11;
 
     DialogueConverter(){
 

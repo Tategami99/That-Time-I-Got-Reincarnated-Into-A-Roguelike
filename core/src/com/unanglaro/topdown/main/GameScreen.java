@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
+import com.unanglaro.topdown.main.GameState.World;
 public class GameScreen extends ScreenAdapter{
     private rpgGame game;
     private OrthographicCamera camera;
@@ -15,6 +16,7 @@ public class GameScreen extends ScreenAdapter{
     private Table mainTable;
 
     GameScreen(rpgGame game){
+        GameState.game = game;
         this.game = game;
 
         camera = new OrthographicCamera();
@@ -41,10 +43,12 @@ public class GameScreen extends ScreenAdapter{
         batch.end();
 
         stage.draw();
+        GameState.detectGameState();
     }
 
     @Override
     public void show() {
+        GameState.world = World.MainMenu;
         stage = new Stage();
         mainTable = new Table();
         mainTable.setFillParent(true);

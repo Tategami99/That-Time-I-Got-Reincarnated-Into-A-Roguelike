@@ -17,8 +17,13 @@ public class EntityManager {
     private float spawnAreaMinY = 100;
     private float spawnAreaMaxY = 800;
 
+    //player
+    private Player player;
+
     //game variables
     private TiledMapTileLayer collisionLayer;
+    private rpgGame game;
+    private Stage stage;
     private float worldWidth;
     private float worldHeight;
 
@@ -33,41 +38,54 @@ public class EntityManager {
     private ArrayList<Projectile> projectilesToRemove = new ArrayList<Projectile>();
 
 
-    public EntityManager(TiledMapTileLayer collisionLayer, float worldWidth, float worldHeight){
+    public EntityManager(TiledMapTileLayer collisionLayer, rpgGame game, Stage stage, float worldWidth, float worldHeight){
         this.collisionLayer = collisionLayer;
+        this.game = game;
+        this.stage = stage;
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
 
         AssetRenderer.bulletProjectileLoad();
-        projectiles.add(new Projectile(1000, 100, 900, 100*(Gdx.graphics.getWidth()/worldWidth), (worldHeight - 950)*(Gdx.graphics.getHeight()/worldHeight), collisionLayer, worldWidth, worldHeight));
         AssetRenderer.spiderEnemyLoad();
     }
 
     public void render(Batch batch, float deltaTime){
+        player.render(batch, deltaTime);
         renderProjectiles(batch);
         renderNormal(batch, deltaTime);
         renderBig(batch, deltaTime);
     }
 
     public void update(float delta){
+        player.update(delta);
         updateProjectiles(delta);
         updateNormal(delta);
         updateBig(delta);
     }
 
-    public void createEntities(Player player, int normalSpiders, int bigSpiders){
+    public void createEntities(int normalSpiders, int bigSpiders){
+        player = new Player(collisionLayer, game, stage, worldWidth, worldHeight, this, 20 * collisionLayer.getTileWidth(), 20 * collisionLayer.getTileHeight());
+        Gdx.input.setInputProcessor(player);
         for (int index = 0; index < normalSpiders; index++) {
             float spawnX = (float) Math.floor(Math.random()*(spawnAreaMaxX-spawnAreaMinX+ 1) + spawnAreaMinX);
             float spawnY = (float) Math.floor(Math.random()*(spawnAreaMaxY-spawnAreaMinY+ 1) + spawnAreaMinY);
             spidersNormal.add(new SpiderEnemy(player, collisionLayer, false, spawnX, spawnY));
             System.out.println("enemy spawned");
+            GameState.enemiesAlive += 1;
         }
         for (int index = 0; index < bigSpiders; index++) {
             float spawnX = (float) Math.floor(Math.random()*(spawnAreaMaxX-spawnAreaMinX+ 1) + spawnAreaMinX);
             float spawnY = (float) Math.floor(Math.random()*(spawnAreaMaxY-spawnAreaMinY+ 1) + spawnAreaMinY);
             spidersBig.add(new SpiderEnemy(player, collisionLayer, true, spawnX, spawnY));
-            System.out.println("x: " + spawnX + "  y: " + spawnY);
+            GameState.enemiesAlive += 1;
         }
+    }
+
+    public void dispose(){
+        AssetRenderer.playerDispose();
+        AssetRenderer.playerItemsDispose();
+        AssetRenderer.spiderEnemyDispose();
+        AssetRenderer.bulletProjectileDispose();
     }
 
     private void renderNormal(Batch batch, float deltaTime){
@@ -89,13 +107,18 @@ public class EntityManager {
     }
 
     private void updateNormal(float delta){
+        //player
+        if(player.health <= 0){
+            System.out.println("died");
+        }
         //normal sized spiders
         if(spidersNormal.size() > 0){
             for(SpiderEnemy spider : spidersNormal){
                 spider.update(delta);
                 if(projectiles.size() > 0){
-                    if(spider.health == 0){
+                    if(spider.health <= 0){
                         spider.dead = true;
+                        GameState.enemiesAlive -= 1;
                     }
                 }
                 if(spider.dead){
@@ -112,8 +135,9 @@ public class EntityManager {
             for(SpiderEnemy spider : spidersBig){
                 spider.update(delta);
                 if(projectiles.size() > 0){
-                    if(spider.health == 0){
+                    if(spider.health <= 0){
                         spider.dead = true;
+                        GameState.enemiesAlive -= 1;
                     }
                 }
                 if(spider.dead){
@@ -147,26 +171,29 @@ public class EntityManager {
         }
     }
 
-    private boolean collidedWithEnemy(Projectile projectile){
+    private boolean collidedWithEnemy(Entity entity){
         boolean collided = false;
         for(Entity enemy : spidersNormal){
             float x = enemy.getX();
             float y = enemy.getY();
             float width = enemy.getWidth();
             float height = enemy.getHeight();
-            float px = projectile.getX();
-            float pw = projectile.getWidth();
-            float py = projectile.getY();
-            float ph = projectile.getHeight();
+            float px = entity.getX();
+            float pw = entity.getWidth();
+            float py = entity.getY();
+            float ph = entity.getHeight();
             collided = x < px + pw && x + width > px && y < py + ph && y + height > py;
             if(collided){
-                enemy.health -= 1;
+                if(entity.isPlayer){
+                    entity.health -= enemy.attack;
+                    System.out.println("Player Health: " + entity.health);
+                }
+                else{
+                    enemy.health -= entity.attack;
+                    System.out.println("hit and health is " + enemy.health);
+                }
             }
         }
-        return collided;
-    }
-    private boolean collidedWithPlayer(Player player, SpiderEnemy enemy){
-        boolean collided = true;
         return collided;
     }
 }

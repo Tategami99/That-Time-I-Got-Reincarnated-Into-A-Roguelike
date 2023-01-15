@@ -23,12 +23,14 @@ public class Projectile extends Entity{
     public boolean remove = false;
     public boolean addedToPosLog = false;
 
-    public Projectile(float speed, float xPos, float yPos, float mouseX, float mouseY, TiledMapTileLayer collisionLayer, float worldWidth, float worldHeight){
+    public Projectile(int projectileAttack, float speed, float xPos, float yPos, float mouseX, float mouseY, TiledMapTileLayer collisionLayer, float worldWidth, float worldHeight){
         setX(xPos);
         setY(yPos);
         this.collisionLayer = collisionLayer;
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
+
+        attack = projectileAttack;
 
         bulletTexture = AssetRenderer.bulletTextureRegion;
         width = AssetRenderer.bulletTexture.getWidth()/2*scaleAmount;

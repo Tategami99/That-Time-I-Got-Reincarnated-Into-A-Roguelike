@@ -55,6 +55,11 @@ public class AssetRenderer {
     public static OrthogonalTiledMapRenderer overworldRenderer;
     public static MapProperties overworldMapProperties;
 
+    //dungeon1 stuff
+    public static TiledMap dungeon1Map;
+    public static OrthogonalTiledMapRenderer dungeon1Renderer;
+    public static MapProperties dungeon1MapProperties;
+
     //bullet projectile stuff
     public static Texture bulletTexture;
     public static TextureRegion bulletTextureRegion;
@@ -163,6 +168,15 @@ public class AssetRenderer {
     public static void overworldDispose(){
         overworldMap.dispose();
         overworldRenderer.dispose();
+    }
+    public static void dungeon1LoadShow(){
+        dungeon1Map = new TmxMapLoader().load("assets/Tiled/Dungeon1.tmx");
+        dungeon1Renderer = new OrthogonalTiledMapRenderer(dungeon1Map);
+        dungeon1MapProperties = dungeon1Map.getProperties();
+    }
+    public static void dungeon1Dispose(){
+        dungeon1Map.dispose();
+        dungeon1Renderer.dispose();
     }
     public static void bulletProjectileLoad(){
         bulletTexture = new Texture("Projectiles/bullet.png");

@@ -5,10 +5,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.unanglaro.topdown.main.GameState.State;
+import com.unanglaro.topdown.main.GameState.World;
 
 public class OpeningScreen extends ScreenAdapter{
     private rpgGame game;
-    private DialogueManager dialoguer;
 
     private OrthographicCamera camera;
     private Stage stage;
@@ -26,9 +27,11 @@ public class OpeningScreen extends ScreenAdapter{
 
     @Override
     public void show(){
+        GameState.world = World.Heaven;
         stage = new Stage();
+        GameState.camera = camera;
         Gdx.input.setInputProcessor(stage);
-        dialoguer = new DialogueManager(game, stage, 0, 17, true, new Overworld(game), "initializePlayer");
+        new DialogueManager(stage, 0, 9, true, State.InitializePlayer, camera.viewportWidth, camera.viewportHeight);
     }
     @Override
     public void render(float delta){
@@ -44,6 +47,7 @@ public class OpeningScreen extends ScreenAdapter{
         batch.end();
 
         stage.draw();
+        GameState.detectGameState();
     }
     @Override
     public void hide(){

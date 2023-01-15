@@ -6,16 +6,16 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.unanglaro.topdown.main.GameState.State;
+import com.unanglaro.topdown.main.GameState.World;
 
 public class Overworld extends ScreenAdapter{
     private Integer worldWidth;
     private Integer worldHeight;
-    private boolean focused;
 
     private rpgGame game;
 
     //entities in game
-    private Player player;
     private EntityManager entities;
 
     private OrthographicCamera camera;
@@ -23,7 +23,6 @@ public class Overworld extends ScreenAdapter{
     private Viewport viewport;
     
     Overworld(rpgGame game){
-        System.out.println("w: " + Gdx.graphics.getWidth() + " h: " + Gdx.graphics.getHeight());
         this.game = game;
         
         camera = new OrthographicCamera();
@@ -35,55 +34,48 @@ public class Overworld extends ScreenAdapter{
         Gdx.gl.glClearColor(0F, 0F, 0F, 1F);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | GL20.GL_STENCIL_BUFFER_BIT);
 
-        if(focused){
-            //tilemap
-            AssetRenderer.overworldRenderer.setView(camera);
-            AssetRenderer.overworldRenderer.render();
+        //tilemap
+        AssetRenderer.overworldRenderer.setView(camera);
+        AssetRenderer.overworldRenderer.render();
 
-            //update stuff
-            camera.update();
-            AssetRenderer.overworldRenderer.getBatch().setProjectionMatrix(camera.combined);
-            entities.update(delta);
-            player.updateNonRender();
+        //update stuff
+        camera.update();
+        AssetRenderer.overworldRenderer.getBatch().setProjectionMatrix(camera.combined);
+        entities.update(delta);
 
-            AssetRenderer.overworldRenderer.getBatch().begin();
-                player.draw(AssetRenderer.overworldRenderer.getBatch(), delta);
-                entities.render(AssetRenderer.overworldRenderer.getBatch(), delta);
-            AssetRenderer.overworldRenderer.getBatch().end();
+        AssetRenderer.overworldRenderer.getBatch().begin();
+            entities.render(AssetRenderer.overworldRenderer.getBatch(), delta);
+        AssetRenderer.overworldRenderer.getBatch().end();
 
-            stage.draw();
-        }
+        stage.draw();
+        GameState.detectGameState();
 	}
     @Override
 	public void show () {
-        focused = true;
+        GameState.world = World.Overworld;
+        GameState.state = State.BattlingEnemies;
         AssetRenderer.overworldLoadShow();
         worldWidth = AssetRenderer.overworldMapProperties.get("width", Integer.class)*AssetRenderer.overworldMapProperties.get("tilewidth", Integer.class);
         worldHeight = AssetRenderer.overworldMapProperties.get("height", Integer.class)*AssetRenderer.overworldMapProperties.get("tileheight", Integer.class);
 
         viewport = new FitViewport(worldWidth, worldHeight, camera);
+        GameState.camera = camera;
 
         stage = new Stage(viewport, AssetRenderer.overworldRenderer.getBatch());
+        GameState.stage = stage;
 
-        entities = new EntityManager((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1), camera.viewportWidth, camera.viewportHeight);
-        player = new Player((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1), game, stage, camera.viewportWidth, camera.viewportHeight, entities,  20 * ((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1)).getTileWidth(), 20 * ((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1)).getTileHeight());
-        entities.createEntities(player, 2, 0);
-
-        Gdx.input.setInputProcessor(player);
+        entities = new EntityManager((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1), game, stage, camera.viewportWidth, camera.viewportHeight);
+        entities.createEntities(3, 0);
 	}
     @Override
 	public void hide () {
-        focused = false;
         dispose();
 	}
     @Override
 	public void dispose () {
         stage.dispose();
         AssetRenderer.overworldDispose();
-        AssetRenderer.playerDispose();
-        AssetRenderer.playerItemsDispose();
-        AssetRenderer.spiderEnemyDispose();
-        AssetRenderer.bulletProjectileDispose();
+        entities.dispose();
 	}
 
     //my methods
