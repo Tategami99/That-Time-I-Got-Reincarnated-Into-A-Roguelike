@@ -154,7 +154,6 @@ public class DialogueManager{
 
     private void startConversation(){
         continueButton = new TextButton(speaker.get(index) + "\n" + words.get(index), AssetRenderer.dialogueBox, "small");
-        index++;
         continueButton.getLabel().setFontScale(0.5f);
         continueButton.getLabel().setWrap(true);
         continueButton.setSize(width/3, height/12);
@@ -165,9 +164,11 @@ public class DialogueManager{
             @Override
             public void clicked (InputEvent event, float x, float y) {
                 System.out.println("clicked");
-                continueButton.setText(speaker.get(index) + "\n" + words.get(index));
                 index++;
-                if(index > end){
+                if(index <= end){
+                    continueButton.setText(speaker.get(index) + "\n" + words.get(index));
+                }
+                else{
                     endConversation();
                 }
             }
@@ -180,6 +181,7 @@ public class DialogueManager{
         continueButton.remove();
         if(doSomething){
             GameState.state = state;
+            GameState.createdConversation = false;
         }
     }
 
@@ -212,6 +214,16 @@ public class DialogueManager{
         speaker.add(player);
         words.add("First time in this world and I get attacked right away.");
         speaker.add(player);
-        words.add("Might as well explore what's up ahead");
+        words.add("Might as well explore what's up ahead.");
+
+        //convo 3 13 to 16
+        speaker.add("Kaden");
+        words.add("Thank you for playing this game!");
+        speaker.add("Kaden");
+        words.add("I spent so long on functionality that I forgot about the fun factor.");
+        speaker.add("Kaden");
+        words.add("If you would like to see me work on this game more,");
+        speaker.add("Kaden");
+        words.add("let me know and hopefully I won't get sick this time.");
     }
 }

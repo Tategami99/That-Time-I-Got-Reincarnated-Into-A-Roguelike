@@ -65,7 +65,8 @@ public class Overworld extends ScreenAdapter{
         GameState.stage = stage;
 
         entities = new EntityManager((TiledMapTileLayer) AssetRenderer.overworldMap.getLayers().get(1), game, stage, camera.viewportWidth, camera.viewportHeight);
-        entities.createEntities(3, 0);
+        entities.createPlayer();
+        entities.createEntities(3, 1);
 	}
     @Override
 	public void hide () {

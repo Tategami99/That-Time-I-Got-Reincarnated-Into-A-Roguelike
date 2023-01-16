@@ -8,14 +8,15 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.FloatArray;
+import com.unanglaro.topdown.main.GameState.State;
 
 import java.lang.Math;
 
 public class EntityManager {
-    private float spawnAreaMinX = 100;
-    private float spawnAreaMaxX = 1500;
-    private float spawnAreaMinY = 100;
-    private float spawnAreaMaxY = 800;
+    public float spawnAreaMinX = 100;
+    public float spawnAreaMaxX = 1500;
+    public float spawnAreaMinY = 100;
+    public float spawnAreaMaxY = 800;
 
     //player
     private Player player;
@@ -63,8 +64,12 @@ public class EntityManager {
         updateBig(delta);
     }
 
-    public void createEntities(int normalSpiders, int bigSpiders){
+    public void createPlayer(){
         player = new Player(collisionLayer, game, stage, worldWidth, worldHeight, this, 20 * collisionLayer.getTileWidth(), 20 * collisionLayer.getTileHeight());
+    }
+
+    public void createEntities(int normalSpiders, int bigSpiders){
+        GameState.state = State.BattlingEnemies;
         Gdx.input.setInputProcessor(player);
         for (int index = 0; index < normalSpiders; index++) {
             float spawnX = (float) Math.floor(Math.random()*(spawnAreaMaxX-spawnAreaMinX+ 1) + spawnAreaMinX);
@@ -108,6 +113,7 @@ public class EntityManager {
 
     private void updateNormal(float delta){
         //player
+        collidedWithEnemy(player);
         if(player.health <= 0){
             System.out.println("died");
         }
@@ -186,6 +192,31 @@ public class EntityManager {
             if(collided){
                 if(entity.isPlayer){
                     entity.health -= enemy.attack;
+                    enemy.dead = true;
+                    GameState.enemiesAlive -= 1;
+                    System.out.println("Player Health: " + entity.health);
+                }
+                else{
+                    enemy.health -= entity.attack;
+                    System.out.println("hit and health is " + enemy.health);
+                }
+            }
+        }
+        for(Entity enemy : spidersBig){
+            float x = enemy.getX();
+            float y = enemy.getY();
+            float width = enemy.getWidth();
+            float height = enemy.getHeight();
+            float px = entity.getX();
+            float pw = entity.getWidth();
+            float py = entity.getY();
+            float ph = entity.getHeight();
+            collided = x < px + pw && x + width > px && y < py + ph && y + height > py;
+            if(collided){
+                if(entity.isPlayer){
+                    entity.health -= enemy.attack;
+                    enemy.dead = true;
+                    GameState.enemiesAlive -= 1;
                     System.out.println("Player Health: " + entity.health);
                 }
                 else{

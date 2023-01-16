@@ -19,6 +19,7 @@ public class Dungeon1 extends ScreenAdapter{
 
     //entities in game
     private EntityManager entities;
+    private int wave = 0;
 
     private OrthographicCamera camera;
     private Stage stage;
@@ -51,12 +52,15 @@ public class Dungeon1 extends ScreenAdapter{
 
         stage.draw();
         GameState.detectGameState();
+
+        //wave stuff
+        startWave();
     }
 
     @Override
     public void show() {
         GameState.world = World.Dungeon1;
-        GameState.state = State.BattlingEnemies;
+        GameState.state = State.Exploring;
         AssetRenderer.dungeon1LoadShow();
         worldWidth = AssetRenderer.dungeon1MapProperties.get("width", Integer.class)*AssetRenderer.dungeon1MapProperties.get("tilewidth", Integer.class);
         worldHeight = AssetRenderer.dungeon1MapProperties.get("height", Integer.class)*AssetRenderer.dungeon1MapProperties.get("tileheight", Integer.class);
@@ -67,9 +71,13 @@ public class Dungeon1 extends ScreenAdapter{
         stage = new Stage(viewport, AssetRenderer.dungeon1Renderer.getBatch());
         GameState.stage = stage;
 
-        entities = new EntityManager((TiledMapTileLayer) AssetRenderer.dungeon1Map.getLayers().get(1), game, stage, camera.viewportWidth, camera.viewportHeight);
-        entities.createEntities(3, 0);
-        GameState.enemiesAlive = 3;
+        entities = new EntityManager((TiledMapTileLayer) AssetRenderer.dungeon1Map.getLayers().get(0), game, stage, camera.viewportWidth, camera.viewportHeight);
+        entities.createPlayer();
+        entities.spawnAreaMinX = 700;
+        entities.spawnAreaMaxX = 1000;
+        entities.spawnAreaMinY = 100;
+        entities.spawnAreaMaxY = 850;
+        wave = 1;
     }
 
     @Override
@@ -82,5 +90,23 @@ public class Dungeon1 extends ScreenAdapter{
         stage.dispose();
         AssetRenderer.dungeon1Dispose();
         entities.dispose();
+    }
+
+    private void startWave(){
+        if(GameState.state == State.Exploring && wave == 1){
+            entities.createEntities(3, 1);
+            wave++;
+        }
+        if(GameState.state == State.Exploring && wave == 2){
+            entities.createEntities(2, 2);
+            wave++;
+        }
+        if(GameState.state == State.Exploring && wave == 3){
+            entities.createEntities(1, 3);
+            wave++;
+        }
+        if(GameState.state == State.Exploring && wave == 4){
+            GameState.state = State.SpecialMessage;
+        }
     }
 }

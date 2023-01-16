@@ -12,7 +12,7 @@ public class GameState {
     public static State state;
     public static OrthographicCamera camera;
 
-    public static DialogueManager dialoguer;
+    public static boolean createdConversation = false;
 
 
     public static int enemiesAlive = 0;
@@ -31,6 +31,8 @@ public class GameState {
         BattlingEnemies,
         Exploring,
         TransferingWorlds,
+        SpecialMessage,
+        CloseGame
     }
 
     public static void detectGameState(){
@@ -66,7 +68,7 @@ public class GameState {
                 DataStorage.playerAttack = 10;
                 DataStorage.playerDefense = 10;
                 DataStorage.playerSpeed = 240;
-                DataStorage.playerHealth = 100;
+                DataStorage.playerHealth = 25;
                 state = State.TransferingWorlds;
                 break;
             case TransferingWorlds:
@@ -79,15 +81,17 @@ public class GameState {
     public static void overworld(){
         switch(state){
             case BattlingEnemies:
-                if(enemiesAlive > 0){
+                System.err.println(enemiesAlive);
+                if(enemiesAlive <= 0){
                     state = State.Exploring;
                 }
                 break;
             case Exploring:
                 //System.out.println("being called");
-                Gdx.input.setInputProcessor(stage);
-                if(dialoguer == null){
-                    dialoguer = new DialogueManager(stage, 10, 12, true, State.TransferingWorlds, camera.viewportWidth, camera.viewportHeight);
+                if(!createdConversation){
+                    Gdx.input.setInputProcessor(stage);
+                    new DialogueManager(stage, 10, 12, true, State.TransferingWorlds, camera.viewportWidth, camera.viewportHeight);
+                    createdConversation = true;
                 }
                 break;
             case TransferingWorlds:
@@ -98,6 +102,28 @@ public class GameState {
         }
     }
     public static void dungeon1(){
-
+        switch(state){
+            case BattlingEnemies:
+                if(enemiesAlive <= 0){
+                    state = State.Exploring;
+                }
+                break;
+            case Exploring:
+                break;
+            case TransferingWorlds:
+                break;
+            case SpecialMessage:
+                if(!createdConversation){
+                    Gdx.input.setInputProcessor(stage);
+                    new DialogueManager(stage, 13, 16, true, State.CloseGame, camera.viewportWidth, camera.viewportHeight);
+                    createdConversation = true;
+                }
+                break;
+            case CloseGame:
+                Gdx.app.exit();
+                break;
+            default:
+                break;
+        }
     }
 }

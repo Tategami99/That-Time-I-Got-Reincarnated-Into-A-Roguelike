@@ -12,13 +12,11 @@ import com.badlogic.gdx.utils.Timer.Task;
 
 public class SpiderEnemy extends Entity{
     private static Animation<TextureRegion> spiderAnimation;
-    public boolean dead = false;
     private float scaleAmount = 2;
     private float width, height;
     private float oldX, oldY;
     public Player player;
     private static float playerX, playerY;
-    private static TiledMapTile playerTile;
     private float elapsedTime = 0f;
     private Vector2 velocity = new Vector2();
     private float speed;
@@ -45,10 +43,12 @@ public class SpiderEnemy extends Entity{
             //scale(scaleAmount);
             width *= scaleAmount;
             height *= scaleAmount;
+            attack = 2;
             speed = DataStorage.playerSpeed*1f;
         }
         else{
             health = 1;
+            attack = 1;
             speed = DataStorage.playerSpeed*1.1f;
         }
     }
